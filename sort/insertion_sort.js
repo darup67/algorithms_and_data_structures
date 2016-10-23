@@ -1,4 +1,4 @@
-function insertion_sort (arr) {
+function insertion_sort (arr, compare=(a,b) => a-b) {
 	// Starts at 2nd element (1st is already sorted)
 	for (let i = 1; i < arr.length; i++) {
 
@@ -8,8 +8,8 @@ function insertion_sort (arr) {
 		// Start each iteration at the element before arr[i]
 		let j = i - 1;
 
-		// Iterate through elements in reverse order, until one is found that is less than arr[i]
-		while (j >= 0 && arr[j] > x) {
+		// Iterate through elements in reverse order, until the comparison function returns negative
+		while (j >= 0 && compare(arr[j], x) > 0) {
 			arr[j + 1] = arr[j];  // Copy arr[j] -> arr[j + 1] (not a swap)
 			j--;
 		}
@@ -20,6 +20,6 @@ function insertion_sort (arr) {
 	return arr;
 }
 
-let testArr = [8, 4, 7, 2, 9];
-insertion_sort(testArr);
-console.log(testArr);
+// let testArr = [8, 4, 7, 2, 9];
+// insertion_sort(testArr, (a,b) => b - a);
+// console.log(testArr);
