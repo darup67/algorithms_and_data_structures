@@ -18,12 +18,15 @@ function partition (arr, lo, hi) {
 
 	// Iterate from pivot - 1 to end of partition
 	for (let i = swapPoint; i < hi; i++) {
+		// If the current index value is less than the pivot value
 		if (arr[i] < arr[pivot]) {
+			// Swap the current index with the current swap point, then move the swap point forward
 			arr.swap(i, swapPoint);
 			swapPoint++;
 		}
 	}
 
+	// Swap the pivot value to its correct final position
 	arr.swap(pivot, swapPoint - 1);
 	return swapPoint;
 }
