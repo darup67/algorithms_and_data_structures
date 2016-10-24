@@ -6,27 +6,31 @@ Array.prototype.swap = function swap (a, b) {
 	this[b] = temp;
 };
 
+// Partition size = hi - lo
+// Base case: partition size <= 0
+// Recursive case: partition size > 0
 function quicksort (arr, lo=0, hi=arr.length) {
-	// Partition size = hi - lo
-	// Base case: partition size <= 0
-	// Recursive case: partition size > 0
-	if (hi > lo) {
+	// "Median of three" pivot choice optimization
+	// Chooses the pivot index based on the median of the lo, hi, and partition midpoint indexes
+	// See https://en.wikipedia.org/wiki/Quicksort#Choice_of_pivot
+	const mid = Math.floor((hi - lo) / 2) + lo;
+	const median = [lo, mid, hi].sort((a,b) => a-b)[1];
+	arr.swap(lo, median);                                      // Swaps the "median" into the pivot position (partition() pivots at lo)
 
-		// "Median of three" pivot choice optimization
-		// Chooses the pivot index based on the median of the lo, hi, and partition midpoint indexes
-		// See https://en.wikipedia.org/wiki/Quicksort#Choice_of_pivot
-		const mid = Math.floor((hi - lo) / 2) + lo;
-		const median = [lo, mid, hi].sort((a,b) => a-b)[1];
-		arr.swap(lo, median);                   // Since partition() always pivots at lo, this swaps the "median" into the pivot position
 
-		// Main algorithm
-		const pivot = partition(arr, lo, hi);   // Sort partition {arr[lo] ... arr[hi]} and get new pivot value
-		quicksort(arr, lo, pivot - 1);          // Sort left partition (everything left of pivot)
-		return quicksort(arr, pivot, hi);       // Sort right partition - void return for ES6 tail call optimization
-	}
+	// ===== Main algorithm =====
+	// Sort partition {arr[lo] ... arr[hi]} and get new pivot value
+	const pivot = partition(arr, lo, hi);
+
+	// If the left partition size > 0, sort left partition
+	if (pivot - 1 > lo)        quicksort(arr, lo, pivot - 1);
+
+	// If the right partition size > 0, sort right partition
+	// Void return used for ES6 tail call optimization
+	if (hi > pivot)     return quicksort(arr, pivot, hi);
 }
 
-// Sorts the partition of arr bounded by (lo, hi) and returns the final index of the pivot value
+// Sorts the partition {arr[lo] ... arr[hi]} and returns the final index of the pivot value
 function partition (arr, lo, hi) {
 	const pivot = lo;
 	let swapPoint = lo + 1;  // Swap-to index, starts at first index after pivot
@@ -47,12 +51,19 @@ function partition (arr, lo, hi) {
 }
 
 // let testArr = [];
-// for (let i = 0; i < 10000; i++) {
+// for (let i = 0; i < 100000; i++) {
 // 	while (testArr.length === i) {
-// 		const val = Math.floor(Math.random() * 999999);
+// 		const val = Math.floor(Math.random() * 99999999);
 // 		if (testArr.indexOf(val) === -1) testArr.push(val);
 // 	}
 // }
 
+// let startTime, diff;
+// startTime = process.hrtime();
+// diff = process.hrtime(startTime);
+
+// startTime = process.hrtime();
 // quicksort(testArr);
-// console.log(testArr);
+// // testArr.sort((a,b) => a-b);
+// diff = process.hrtime(startTime);
+// console.log(diff);
