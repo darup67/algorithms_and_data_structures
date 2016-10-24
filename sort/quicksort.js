@@ -5,10 +5,11 @@ Array.prototype.swap = function swap (a, b) {
 };
 
 function quicksort (arr, lo=0, hi=arr.length) {
+	// If the values 
 	if (lo < hi) {
-		const pivot = partition(arr, lo, hi);
-		quicksort(arr, lo, pivot - 1);
-		quicksort(arr, pivot, hi);
+		const pivot = partition(arr, lo, hi);   // Sort current partition and get new pivot value
+		quicksort(arr, lo, pivot - 1);          // Sort everything left of pivot
+		quicksort(arr, pivot, hi);              // Sort everything right of pivot
 	}
 }
 
