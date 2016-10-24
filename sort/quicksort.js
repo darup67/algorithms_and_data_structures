@@ -1,3 +1,9 @@
+// Future optimizations:
+// - does quicksort need to be called for partitions of size 1?
+// - use of insertion_sort once partition size <= 10
+// - only do median of three if partition size is large (100+ ?)
+// - in-line/one-line swap?
+
 'use strict';
 
 Array.prototype.swap = function swap (a, b) {
@@ -10,12 +16,13 @@ Array.prototype.swap = function swap (a, b) {
 // Base case: partition size <= 0
 // Recursive case: partition size > 0
 function quicksort (arr, lo=0, hi=arr.length) {
-	// "Median of three" pivot choice optimization
+	// "Median of three" pivot choice optimization (see https://en.wikipedia.org/wiki/Quicksort#Choice_of_pivot)
 	// Chooses the pivot index based on the median of the lo, hi, and partition midpoint indexes
-	// See https://en.wikipedia.org/wiki/Quicksort#Choice_of_pivot
+	// Improves worst-case performance (sorted / near-sorted data)
+	// On highly random data, will cause 3-4x performance hit.  Comment out as needed.
 	const mid = Math.floor((hi - lo) / 2) + lo;
 	const median = [lo, mid, hi].sort((a,b) => a-b)[1];
-	arr.swap(lo, median);                                      // Swaps the "median" into the pivot position (partition() pivots at lo)
+	arr.swap(lo, median);  // Swaps the "median" into the pivot position (partition() pivots at lo)
 
 
 	// ===== Main algorithm =====
@@ -23,17 +30,17 @@ function quicksort (arr, lo=0, hi=arr.length) {
 	const pivot = partition(arr, lo, hi);
 
 	// If the left partition size > 0, sort left partition
-	if (pivot - 1 > lo)        quicksort(arr, lo, pivot - 1);
+	if (pivot - 1 > lo)    quicksort(arr, lo, pivot - 1);
 
 	// If the right partition size > 0, sort right partition
 	// Void return used for ES6 tail call optimization
-	if (hi > pivot)     return quicksort(arr, pivot, hi);
+	if (hi > pivot) return quicksort(arr, pivot, hi);
 }
 
 // Sorts the partition {arr[lo] ... arr[hi]} and returns the final index of the pivot value
 function partition (arr, lo, hi) {
 	const pivot = lo;
-	let swapPoint = lo + 1;  // Swap-to index, starts at first index after pivot
+	let swapPoint = pivot + 1;  // Swap-to index, starts at first index after pivot
 
 	// Iterate from pivot - 1 to end of partition
 	for (let i = swapPoint; i < hi; i++) {
@@ -45,7 +52,7 @@ function partition (arr, lo, hi) {
 		}
 	}
 
-	// Swap the pivot value to its correct final position
+	// Swap the pivot value to its correct final position (before the final swap point)
 	arr.swap(pivot, swapPoint - 1);
 	return swapPoint;
 }
@@ -67,3 +74,4 @@ function partition (arr, lo, hi) {
 // // testArr.sort((a,b) => a-b);
 // diff = process.hrtime(startTime);
 // console.log(diff);
+// console.log(testArr);
