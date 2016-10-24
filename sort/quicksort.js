@@ -16,7 +16,7 @@ const insertion_sort = require('./insertion_sort.js'),
 
 
 // Partition size = hi - lo
-// Base case: partition size <= 0
+// Base case:      partition size <= 0
 // Recursive case: partition size > 0
 function quicksort (arr, compare, lo=0, hi=arr.length-1) {
 
@@ -63,7 +63,7 @@ function partition (arr, compare=(a,b) => a-b, lo, hi) {
 
 	// Iterate from pivot - 1 to end of partition
 	for (let i = swapPoint; i < pivot; i++) {
-		// If the current index value is less than the pivot value
+		// If the current index value is less/more than the pivot value
 		if (compare(arr[pivot], arr[i]) > 0) {  // if (arr[i] < arr[pivot])
 
 			// Swap the current index with the current swap point, then move the swap point forward
@@ -77,30 +77,4 @@ function partition (arr, compare=(a,b) => a-b, lo, hi) {
 	return swapPoint;
 }
 
-// let testArr = [];
-// for (let i = 0; i < 1000000; i++) {
-	// while (testArr.length === i) {
-	// 	const val = Math.floor(Math.random() * 10000000);
-	// 	if (testArr.indexOf(val) === -1) testArr.push(val);
-	// }
-// 	testArr.push(Math.floor(Math.random() * 10000000));
-// }
-
-// console.log(testArr);
-// quicksort(testArr);
-// console.log(testArr);
-
-// let startTime, diff;
-// startTime = process.hrtime();
-// diff = process.hrtime(startTime);
-
-// startTime = process.hrtime();
-// quicksort(testArr);
-// // testArr.sort((a,b) => a-b);
-// diff = process.hrtime(startTime);
-// console.log(diff);
-// console.log(testArr);
-
-// Faster median finder?  Not speed tested yet
-// const median = (arr[mid] >= arr[lo] && arr[mid] <= arr[hi]) || (arr[mid] >= arr[hi] && arr[mid] <= arr[lo]) ? mid : 
-// 	((arr[lo] >= arr[mid] && arr[lo] <= arr[hi]) || (arr[lo] >= arr[hi] && arr[lo] <= arr[mid]) ? lo : hi);
+module.exports = quicksort;
