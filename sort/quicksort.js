@@ -5,7 +5,7 @@ Array.prototype.swap = function swap (a, b) {
 };
 
 function quicksort (arr, lo=0, hi=arr.length) {
-	// If the values 
+	// If base case (partition size === 1) is false
 	if (lo < hi) {
 		const pivot = partition(arr, lo, hi);   // Sort current partition and get new pivot value
 		quicksort(arr, lo, pivot - 1);          // Sort everything left of pivot
