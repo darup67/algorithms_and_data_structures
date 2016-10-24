@@ -1,3 +1,5 @@
+'use strict';
+
 function insertion_sort (arr, compare=(a,b) => a-b) {
 	// Starts at 2nd element (1st is already sorted)
 	for (let i = 1; i < arr.length; i++) {
