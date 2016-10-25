@@ -8,23 +8,43 @@ Array.prototype.swap = function swap (a, b) {
 
 // Base case:      subarray size <= 1
 // Recursive case: subarray size > 1
-function mergesort (arr) {
-	if (arr.length > 1) {
-		const midpoint = Math.floor(arr.length / 2);
-		return merge(mergesort(arr.slice(0, midpoint)), mergesort(arr.slice(midpoint, arr.length)));
+function mergesort (arr, lo=0, hi=arr.length-1) {
+	if (hi > lo) {
+		const mid = Math.floor((hi - lo) / 2) + lo;
+		
+		mergesort(arr, lo, mid);
+		mergesort(arr, mid + 1, hi);
 
-	} else return arr;
+		merge(arr, lo, mid, hi);
+	}
 }
 
-function merge (arr1, arr2) {
-	let result = [];
-	while (arr1.length > 0 || arr2.length > 0) {
-		result.push( arr1[0] < arr2[0] || arr2.length === 0 ? arr1.shift() : arr2.shift() );
+function merge (arr, lo, mid, hi) {
+	// Stores copy of left subarray so it is not overwritten
+	const buffer   = arr.slice(lo, mid + 1);
+
+	// Swaps in from left -> right over merged subarray starting at arr[lo]
+	// Left subarray in buffer, indexes from 0 to buffer.length - 1
+	// Right subarray in arr, indexes from mid + 1 to hi
+	let swapPoint  = lo,
+	    leftPoint  = 0,
+	    rightPoint = mid + 1;
+
+	// For the length of the merged subarray
+	while (swapPoint <= hi) {
+
+		// If right subarray is used up, OR (left subarray still has unused values AND comparison picks left value)
+		if (rightPoint > hi || (leftPoint < buffer.length) && (buffer[leftPoint] < arr[rightPoint])) {
+			arr[swapPoint] = buffer[leftPoint];
+			leftPoint++;
+		
+		} else {
+			arr[swapPoint] = arr[rightPoint];
+			rightPoint++;
+		}
+
+		swapPoint++;
 	}
-
-	arr1 = arr2 = null;
-
-	return result;
 }
 
 module.exports = mergesort;
