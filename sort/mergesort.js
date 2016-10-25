@@ -23,7 +23,7 @@ function merge (arr, compare, lo, mid, hi) {
 	    rightPoint = mid + 1;
 
 	// For the length of the merged subarray
-	while (swapPoint <= hi) {
+	for (; swapPoint <= hi; swapPoint++) {
 
 		// If right subarray is used up, OR (left subarray still has unused values AND comparison picks left value)
 		if (rightPoint > hi || (leftPoint < buffer.length && compare(buffer[leftPoint], arr[rightPoint]) < 0)) {
@@ -34,8 +34,6 @@ function merge (arr, compare, lo, mid, hi) {
 			arr[swapPoint] = arr[rightPoint];
 			rightPoint++;
 		}
-
-		swapPoint++;
 	}
 }
 
