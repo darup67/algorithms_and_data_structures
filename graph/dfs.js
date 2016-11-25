@@ -1,6 +1,6 @@
 'use strict';
 
-// Undirected test graph
+// Test graph
 const graph = {
 
 	// Adjacency list
