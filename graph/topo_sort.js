@@ -1,6 +1,6 @@
 'use strict';
 
-// Edge constructor
+// Vertex constructor
 function Vertex (edges) {
 	this.edges = edges;
 	this.visited = false;
