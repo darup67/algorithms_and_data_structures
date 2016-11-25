@@ -6,49 +6,72 @@ function Vertex (edges) {
 	this.visited = false;
 }
 
-// Test graph
-const graph = {
+// Graph constructor
+function Graph (vertices) {
+	const tempVertexArr = Array(vertices.length);
 
-	// Adjacency list
-	vertexes: [
-		new Vertex([5]),
-		new Vertex([0]),
-		new Vertex([1, 3]),
-		new Vertex([]),
-		new Vertex([5]),
-		new Vertex([]),
-		new Vertex([2])
-	]
-};
-
-function dfs_loop (g) {
-	let currentLabel = g.vertexes.length - 1;
-
-	for (let i = g.vertexes.length - 1; i >= 0; i--) {
-		if (!g.vertexes[i].visited) {
-			console.log()
-			console.log('DFS at', i);
-			console.log('currentLabel:', currentLabel)
-			dfs(g, i);
-		}
+	for (let i = 0; i < vertices.length; i++) {
+		tempVertexArr[i] = new Vertex(vertices[i]);
 	}
 
-	function dfs (g, startVertex) {
-		g.vertexes[startVertex].visited = true;
+	this.vertices = tempVertexArr;
+};
 
-		for (const endVertex of g.vertexes[startVertex].edges)  {
-			if (!g.vertexes[endVertex].visited) {
+// Outer loop for topo sort
+function dfs_loop (g, debug) {
+	let currentLabel = g.vertices.length - 1,
+	    ordering     = [];
+
+	// DFS modified for topo sort
+	function dfs (g, currentVertex) {
+		
+		// Set this vertex to visited
+		g.vertices[currentVertex].visited = true;
+
+		// Recursive DFS loop
+		for (const endVertex of g.vertices[currentVertex].edges) {
+			if (!g.vertices[endVertex].visited) {
 				dfs(g, endVertex);
 			}
 		}
 
-		g.vertexes[startVertex].order = currentLabel;
+		// Add ordering to vertex and ordering array, decrement currentLabel
+		g.vertices[currentVertex].order = currentLabel;
+		ordering.unshift(currentVertex);
 		currentLabel--;
 
-		console.log('Node:', startVertex);
-		console.log(g.vertexes[startVertex]);
-		console.log();
+		if (debug) {
+			console.log('Node:', currentVertex);
+			console.log(g.vertices[currentVertex]);
+			console.log();
+		}
 	}
+
+	// Outer loop
+	for (let i = g.vertices.length - 1; i >= 0; i--) {
+		if (!g.vertices[i].visited) {
+			if (debug) {
+				console.log();
+				console.log('DFS at', i);
+				console.log('currentLabel:', currentLabel);
+			}
+
+			dfs(g, i);
+		}
+	}
+
+	return ordering;
 }
 
-dfs_loop(graph, 0);
+
+const graph = new Graph([
+	[5],
+	[0],
+	[1,3],
+	[],
+	[5],
+	[],
+	[2]
+]);
+
+console.log(dfs_loop(graph, 0, process.argv[2] || false));
