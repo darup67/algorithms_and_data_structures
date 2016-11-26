@@ -13,18 +13,18 @@ function dfs (g, v) {
 
     // Visit only previously unvisited vertices and only traverse edges in desired direction
     while (stack.length > 0) {
-      const vertex = stack.pop();
+      const currentVertex = stack.pop();
 
-      vertex.visited = true;
+      currentVertex.visited = true;
 
-      for (let i = 0; i < vertex.edges.length; i++) {
-        if (vertex.edges[i].forward && !g.vertices[vertex.edges[i].endVertex].visited) {
-          g.vertices[vertex.edges[i].endVertex].visited = true;
-          stack.push(g.vertices[vertex.edges[i].endVertex]);
+      for (let i = 0; i < currentVertex.edges.length; i++) {
+        if (currentVertex.edges[i].forward && !g.vertices[currentVertex.edges[i].endVertex].visited) {
+          g.vertices[currentVertex.edges[i].endVertex].visited = true;
+          stack.push(g.vertices[currentVertex.edges[i].endVertex]);
         }
       }
 
-      result.unshift(vertex);
+      result.unshift(currentVertex);
     }
 
     return result;
@@ -36,7 +36,7 @@ function dfs (g, v) {
 // Read file and process data set
 fs.readFile("data/dfs_test.txt", "utf8", (err, data) => {
   const graph = new Graph(processEdges(data, true)),
-        res   = dfs(graph, 0);
+        res   = dfs(graph, 6);
 
   for (const vertex of res) console.log(vertex);
 })

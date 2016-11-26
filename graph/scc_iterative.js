@@ -2,11 +2,10 @@
 
 const fs           = require('fs'),
       Graph        = require('./data/graph.js').Graph,
-      processEdges = require('./data/graph.js').processEdges,
-      debug        = process.argv[2];
+      processEdges = require('./data/graph.js').processEdges;
 
 // Outer loop for SCC
-function findSCC (g) {
+function findSCC (g, debug) {
   let orderArr            = [],
       count               = 0,
       countArr            = []; 
@@ -36,23 +35,25 @@ function findSCC (g) {
         }
       }
 
-      result.push(currentVertex.label);
+      result.unshift(currentVertex.label);
     }
 
-    if (!isLoopTwo) {
-      for (let i = result.length - 1; i >= 0; i--) {
-        orderArr.push(result[i]);
-      }
-    }
+    if (!isLoopTwo) orderArr = orderArr.concat(result);
+
+    if (debug) console.log(result);
   }
 
 
 
   // Loop #1 (ordering)
-  if (debug) console.log('Loop 1: Reverse');
+  if (debug) console.log('Loop 1: Reverse')
   for (let i = g.vertices.length - 1; i >= 0; i--) {
     if (g.vertices[i] && !g.vertices[i].visited) {
+      if (debug) console.log('DFS at', g.vertices[i].label);
+
       dfs(g, i, false);
+
+      if (debug) console.log();
     }
   }
 
@@ -68,13 +69,17 @@ function findSCC (g) {
   }
 
   // Loop #2 (leader labelling)
-  if (debug) console.log('Loop 2: Forward');
+  if (debug) console.log('Loop 2: Forward')
   for (let i = orderArr.length - 1; i >= 0; i--) {
     if (g.vertices[orderArr[i]] && !g.vertices[orderArr[i]].visited) {
       count = 0;
+
+      if (debug) console.log('DFS at', orderArr[i]);
       
       dfs(g, orderArr[i], true);
       countArr.push(count);
+
+      if (debug) console.log();
     }
   }
 
@@ -89,5 +94,5 @@ fs.readFile("data/SCC.txt", "utf8", (err, data) => {
         sccCount = findSCC(graph, process.argv[2]);
         
   console.log('SCC Counts:');
-  console.log(sccCount.sort((a,b) => b-a));
+  console.log(sccCount.sort((a,b) => a-b));
 })
