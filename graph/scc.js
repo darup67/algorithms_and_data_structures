@@ -1,76 +1,20 @@
 'use strict';
 
-const fs = require('fs');
+const fs           = require('fs'),
+      Graph        = require('./data/graph.js').Graph,
+      processEdges = require('./data/graph.js').processEdges;
 
-// Graph constructor
-function Graph (edgeArr, debug) {
-  const tempVertexArr = [];
-
-  for (let i = 0; i < edgeArr.length; i++) {
-    const startVertex = edgeArr[i][0],
-          endVertex   = edgeArr[i][1];
-
-    // If a vertex has not been created for the given start vertex
-    if (!tempVertexArr[startVertex]) {
-      tempVertexArr[startVertex] = {
-        edges: [{
-          endVertex: endVertex,
-          forward: true
-        }],
-        visited: false
-      };
-    
-    // If start vertex already exists
-    } else {
-      tempVertexArr[startVertex].edges.push({
-        endVertex: endVertex,
-        forward: true
-      })
-    }
-
-    // If a vertex has not been created for the given end vertex
-    if (!tempVertexArr[endVertex]) {
-      tempVertexArr[endVertex] = {
-        edges: [{
-          endVertex: startVertex,
-          forward: false
-        }],
-        visited: false
-      };
-    
-    // If end vertex already exists
-    } else {
-      tempVertexArr[endVertex].edges.push({
-        endVertex: startVertex,
-        forward: false
-      })
-    }
-  }
-
-  for (let i = 0; i < tempVertexArr.length; i++) {
-    if (tempVertexArr[i]) tempVertexArr[i].label = i;
-  }
-
-  this.vertices = tempVertexArr;
-
-  if (debug) {
-    for (var i = 0; i < this.vertices.length; i++) {
-      console.log('Vertex:', this.vertices[i].label);
-      console.log(this.vertices[i]);
-      console.log();
-    }
-  }
-};
-
-
-
-// Outer loop for topo sort
+// Outer loop for SCC
 function findSCC (g, debug) {
   let finishingTime       = 0,
       currentSourceVertex = undefined,
       orderArr            = [],
       count               = 0,
       countArr            = [];
+
+  for (let i = 0; i < g.vertices.length; i++) {
+    if (g.vertices[i]) g.vertices[i].label = i;
+  }  
 
   // DFS modified for SCC
   function dfs (g, currentVertex, isLoopTwo) {
@@ -151,20 +95,10 @@ function findSCC (g, debug) {
 
 
 
-// Test functions
+// Read file and process data set
 fs.readFile("data/scc_test.txt", "utf8", (err, data) => {
-  const lines     = data.split('\r\n'),
-        graphData = Array(lines.length);
-
-  // Create edges from file data
-  for (let i = 0; i < lines.length; i++) {
-    const edge = lines[i].split(' ');
-    edge[0] = +edge[0];
-    edge[1] = +edge[1];
-    graphData[i] = edge;
-  }
-
-  const graph = new Graph(graphData);
-
-  console.log(findSCC(graph, process.argv[2]));
+  const graph    = new Graph(processEdges(data, true)),
+        sccCount = findSCC(graph, process.argv[2]);
+        
+  console.log(sccCount.sort((a,b) => a-b));
 })

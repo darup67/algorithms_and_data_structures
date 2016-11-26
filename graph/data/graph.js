@@ -59,8 +59,6 @@ function processEdges (data, cr) {
     graphData[i] = [+edge[0], +edge[1]];
   }
 
-  console.log(graphData)
-
   return graphData;
 }
 

@@ -1,39 +1,31 @@
 'use strict';
 
-// Test graph
-const graph = {
+const fs           = require('fs'),
+      Graph        = require('./data/graph.js').Graph,
+      processEdges = require('./data/graph.js').processEdges;
 
-  // Adjacency list
-  list: [
-    [1, 5],
-    [0, 2],
-    [1, 3, 6],
-    [2],
-    [5],
-    [0, 4],
-    [2]
-  ],
+function dfs (g, currentVertex) {
+  if (g.vertices[currentVertex]) {
 
-  // Visited nodes array
-  init: function () {
-    this.visited = Array(this.list.length).fill(false);
-    return this;
-  }
-}.init();
+    // Set this vertex to visited
+    g.vertices[currentVertex].visited = true;
 
-// console.log(graph);
-
-function dfs (g, startVertex) {
-  g.visited[startVertex] = true;
-  // console.log(g.visited);
-
-  for (const endVertex of g.list[startVertex])  {
-    if (!g.visited[endVertex]) {
-      dfs(g, endVertex);
+    // Recursive DFS loop
+    // Visit only previously unvisited vertices and only traverse edges in desired direction
+    for (const edge of g.vertices[currentVertex].edges) {
+      if (!g.vertices[edge.endVertex].visited && edge.forward) {
+        dfs(g, edge.endVertex);
+      }
     }
   }
 
-  console.log('Finished at:', startVertex);
+  console.log('Finished at:', currentVertex);
 }
 
-dfs(graph, 0);
+// Read file and process data set
+fs.readFile("data/dfs_test.txt", "utf8", (err, data) => {
+  const graph = new Graph(processEdges(data, true));
+  
+  console.log(graph);
+  dfs(graph, 6)
+})

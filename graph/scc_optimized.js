@@ -1,56 +1,8 @@
 'use strict';
 
-const fs = require('fs');
-
-// Graph constructor
-function Graph (edgeArr) {
-  const tempVertexArr = [];
-
-  for (let i = 0; i < edgeArr.length; i++) {
-    const startVertex = edgeArr[i][0],
-          endVertex   = edgeArr[i][1];
-
-    // If a vertex has not been created for the given start vertex
-    if (!tempVertexArr[startVertex]) {
-      tempVertexArr[startVertex] = {
-        edges: [{
-          endVertex: endVertex,
-          forward: true
-        }],
-        visited: false
-      };
-    
-    // If start vertex already exists
-    } else {
-      tempVertexArr[startVertex].edges.push({
-        endVertex: endVertex,
-        forward: true
-      })
-    }
-
-    // If a vertex has not been created for the given end vertex
-    if (!tempVertexArr[endVertex]) {
-      tempVertexArr[endVertex] = {
-        edges: [{
-          endVertex: startVertex,
-          forward: false
-        }],
-        visited: false
-      };
-    
-    // If end vertex already exists
-    } else {
-      tempVertexArr[endVertex].edges.push({
-        endVertex: startVertex,
-        forward: false
-      })
-    }
-  }
-
-  this.vertices = tempVertexArr;
-};
-
-
+const fs           = require('fs'),
+      Graph        = require('./data/graph.js').Graph,
+      processEdges = require('./data/graph.js').processEdges;
 
 // Outer loop for topo sort
 function findSCC (g) {
@@ -118,22 +70,10 @@ function findSCC (g) {
 
 
 
-// Test functions
-fs.readFile("SCC.txt", "utf8", (err, data) => {
-  const lines     = data.split('\n'),
-        graphData = Array(lines.length);
-
-  // console.log(lines.length)
-
-  // Create edges from file data
-  for (let i = 0; i < lines.length; i++) {
-    const edge = lines[i].split(' ');
-    graphData[i] = [+edge[0], +edge[1]];
-  }
-  // console.log(graphData)
-
-  const graph    = new Graph(graphData),
+// Read file and process data set
+fs.readFile("data/scc_test.txt", "utf8", (err, data) => {
+  const graph    = new Graph(processEdges(data, true)),
         sccCount = findSCC(graph, process.argv[2]);
-
+        
   console.log(sccCount.sort((a,b) => a-b));
 })
