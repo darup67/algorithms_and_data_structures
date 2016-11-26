@@ -48,7 +48,7 @@ function Graph (edgeArr, debug) {
 	}
 
 	for (let i = 0; i < tempVertexArr.length; i++) {
-		tempVertexArr[i].label = i + 1;
+		if (tempVertexArr[i]) tempVertexArr[i].label = i;
 	}
 
 	this.vertices = tempVertexArr;
@@ -67,7 +67,8 @@ function Graph (edgeArr, debug) {
 // Outer loop for topo sort
 function findSCC (g, debug) {
 	let finishingTime       = 0,
-	    currentSourceVertex = undefined;
+	    currentSourceVertex = undefined,
+	    orderArr            = [];
 
 	// DFS modified for SCC
 	function dfs (g, currentVertex, isLoopTwo) {
@@ -82,21 +83,8 @@ function findSCC (g, debug) {
 		// Visit only previously unvisited vertices and only traverse edges in desired direction
 		for (const edge of g.vertices[currentVertex].edges) {
 			const edgeCondition = isLoopTwo ? edge.forward : !edge.forward;
-			let endVertex = edge.endVertex;
-
-			// Correction: endVertex selection for 2nd loop
-			console.log(endVertex)	
-			if (isLoopTwo) {
-				for (let i = 0; i < g.vertices.length; i++) {
-					if (g.vertices[i].label === edge.endVertex + 1) {
-						endVertex = i;
-						break;
-						console.log('endVertex:', endVertex);
-					}
-				}
-			}
-
-			if (!g.vertices[endVertex].visited && edgeCondition) {
+		
+			if (!g.vertices[edge.endVertex].visited && edgeCondition) {
 				dfs(g, edge.endVertex, isLoopTwo);
 			}
 		}
@@ -105,6 +93,7 @@ function findSCC (g, debug) {
 		if (!isLoopTwo) {
 			g.vertices[currentVertex].finishingTime = finishingTime;
 			finishingTime++;
+			orderArr.push(g.vertices[currentVertex].label);
 		}
 
 		if (debug) {
@@ -114,16 +103,7 @@ function findSCC (g, debug) {
 		}
 	}
 
-	if (debug) {
-		console.log();
-		console.log('Unsorted order:');
-		console.log(g.vertices);
-		// for (let i = 0; i < g.vertices.length; i++) {
-		// 	console.log('Vertex:', g.vertices[i].label);
-		// 	console.log(g.vertices[i]);
-		// }
-		console.log();
-	}
+
 
 	// Loop #1 (ordering)
 	if (debug) console.log('Loop 1: Reverse')
@@ -139,39 +119,25 @@ function findSCC (g, debug) {
 		}
 	}
 
+	console.log(orderArr);
+
 	// Reset all vertices to unvisited
 	for (let i = 0; i < g.vertices.length; i++) {
 		if (g.vertices[i]) g.vertices[i].visited = false;
 	}
 
-	// Sort vertices by finishingTime
-	// There's a faster way to do this, but I'm not seeing it yet!
-	g.vertices.sort((a,b) => a.finishingTime - b.finishingTime);
-
-	if (debug) {
-		console.log();
-		console.log('Sorted order:');
-		console.log(g.vertices);
-		// for (let i = 0; i < g.vertices.length; i++) {
-		// 	console.log('Vertex:', g.vertices[i].label);
-		// 	console.log(g.vertices[i]);
-		// }
-		console.log();
-	}
-
 	// Loop #2 (leader labelling)
 	if (debug) console.log('Loop 2: Forward')
-	for (let i = g.vertices.length - 1; i >= 0; i--) {
-		if (g.vertices[i] && !g.vertices[i].visited) {
-			currentSourceVertex = i + 1;
+	for (let i = orderArr.length - 1; i >= 0; i--) {
+		if (g.vertices[orderArr[i]] && !g.vertices[orderArr[i]].visited) {
+			currentSourceVertex = orderArr[i];
 
 			if (debug) {
 				console.log();
-				console.log('DFS at', g.vertices[i].label);
-				console.log('currentSourceVertex:', currentSourceVertex);
+				console.log('DFS at', currentSourceVertex);
 			}
 			
-			dfs(g, i, true);
+			dfs(g, currentSourceVertex, true);
 		}
 	}
 }
@@ -186,8 +152,8 @@ fs.readFile("scc_test.txt", "utf8", (err, data) => {
 	// Create edges from file data
 	for (let i = 0; i < lines.length; i++) {
 		const edge = lines[i].split(' ');
-		edge[0] = +edge[0] - 1;
-		edge[1] = +edge[1] - 1;
+		edge[0] = +edge[0];
+		edge[1] = +edge[1];
 		graphData[i] = edge;
 	}
 
