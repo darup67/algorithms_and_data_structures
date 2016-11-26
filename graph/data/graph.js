@@ -45,6 +45,10 @@ function Graph (edgeArr) {
     }
   }
 
+  for (let i = 0; i < tempVertexArr.length; i++) {
+    if (tempVertexArr[i]) tempVertexArr[i].label = i;
+  }
+
   this.vertices = tempVertexArr;
 };
 

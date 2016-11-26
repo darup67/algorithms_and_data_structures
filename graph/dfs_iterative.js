@@ -36,7 +36,7 @@ function dfs (g, v) {
 // Read file and process data set
 fs.readFile("data/dfs_test.txt", "utf8", (err, data) => {
   const graph = new Graph(processEdges(data, true)),
-        res   = dfs(graph, 6);
+        res   = dfs(graph, 0);
 
   for (const vertex of res) console.log(vertex);
 })
