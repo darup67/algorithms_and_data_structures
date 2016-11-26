@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 // Graph constructor
-function Graph (edgeArr, debug) {
+function Graph (edgeArr) {
   const tempVertexArr = [];
 
   for (let i = 0; i < edgeArr.length; i++) {
@@ -47,27 +47,14 @@ function Graph (edgeArr, debug) {
     }
   }
 
-  for (let i = 0; i < tempVertexArr.length; i++) {
-    if (tempVertexArr[i]) tempVertexArr[i].label = i;
-  }
-
   this.vertices = tempVertexArr;
-
-  if (debug) {
-    for (var i = 0; i < this.vertices.length; i++) {
-      console.log('Vertex:', this.vertices[i].label);
-      console.log(this.vertices[i]);
-      console.log();
-    }
-  }
 };
 
 
 
 // Outer loop for topo sort
-function findSCC (g, debug) {
+function findSCC (g) {
   let finishingTime       = 0,
-      currentSourceVertex = undefined,
       orderArr            = [],
       count               = 0,
       countArr            = [];
@@ -80,7 +67,6 @@ function findSCC (g, debug) {
 
     // If this is the 2nd pass, set leader for this vertex to currentSourceVertex
     if (isLoopTwo) {
-      g.vertices[currentVertex].leader = currentSourceVertex;
       count++;
     }
 
@@ -96,30 +82,16 @@ function findSCC (g, debug) {
 
     // If this is the 1st pass, set finishingTime to finishingTime and increment
     if (!isLoopTwo) {
-      g.vertices[currentVertex].finishingTime = finishingTime;
+      orderArr.push(currentVertex);
       finishingTime++;
-      orderArr.push(g.vertices[currentVertex].label);
-    }
-
-    if (debug) {
-      console.log('Vertex:', g.vertices[currentVertex].label);
-      console.log(g.vertices[currentVertex]);
-      console.log();
     }
   }
 
 
 
   // Loop #1 (ordering)
-  if (debug) console.log('Loop 1: Reverse')
   for (let i = g.vertices.length - 1; i >= 0; i--) {
     if (g.vertices[i] && !g.vertices[i].visited) {
-      if (debug) {
-        console.log();
-        console.log('DFS at', g.vertices[i].label);
-        console.log('finishingTime:', finishingTime);
-      }
-
       dfs(g, i, false);
     }
   }
@@ -130,18 +102,13 @@ function findSCC (g, debug) {
   }
 
   // Loop #2 (leader labelling)
-  if (debug) console.log('Loop 2: Forward')
   for (let i = orderArr.length - 1; i >= 0; i--) {
-    if (g.vertices[orderArr[i]] && !g.vertices[orderArr[i]].visited) {
-      count = 0;
-      currentSourceVertex = orderArr[i];
+    const index = orderArr[i];
 
-      if (debug) {
-        console.log();
-        console.log('DFS at', currentSourceVertex);
-      }
+    if (g.vertices[index] && !g.vertices[index].visited) {
+      count = 0;
       
-      dfs(g, currentSourceVertex, true);
+      dfs(g, index, true);
       countArr.push(count);
     }
   }
@@ -152,19 +119,21 @@ function findSCC (g, debug) {
 
 
 // Test functions
-fs.readFile("data/scc_test.txt", "utf8", (err, data) => {
-  const lines     = data.split('\r\n'),
+fs.readFile("SCC.txt", "utf8", (err, data) => {
+  const lines     = data.split('\n'),
         graphData = Array(lines.length);
+
+  // console.log(lines.length)
 
   // Create edges from file data
   for (let i = 0; i < lines.length; i++) {
     const edge = lines[i].split(' ');
-    edge[0] = +edge[0];
-    edge[1] = +edge[1];
-    graphData[i] = edge;
+    graphData[i] = [+edge[0], +edge[1]];
   }
+  // console.log(graphData)
 
-  const graph = new Graph(graphData);
+  const graph    = new Graph(graphData),
+        sccCount = findSCC(graph, process.argv[2]);
 
-  console.log(findSCC(graph, process.argv[2]));
+  console.log(sccCount.sort((a,b) => a-b));
 })
