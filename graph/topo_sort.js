@@ -74,4 +74,4 @@ const graph = new Graph([
 	[2]
 ]);
 
-console.log(dfs_loop(graph, 0, process.argv[2] || false));
+console.log(dfs_loop(graph, process.argv[2] || false));
