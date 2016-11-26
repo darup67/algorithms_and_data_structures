@@ -4,28 +4,39 @@ const fs           = require('fs'),
       Graph        = require('./data/graph.js').Graph,
       processEdges = require('./data/graph.js').processEdges;
 
-function dfs (g, currentVertex) {
-  if (g.vertices[currentVertex]) {
+function dfs (g, v) {
+  if (g.vertices[v]) {
 
-    // Set this vertex to visited
-    g.vertices[currentVertex].visited = true;
+    // Create vertex stack
+    const stack  = [g.vertices[v]],
+          result = [];
 
-    // Recursive DFS loop
     // Visit only previously unvisited vertices and only traverse edges in desired direction
-    for (const edge of g.vertices[currentVertex].edges) {
-      if (!g.vertices[edge.endVertex].visited && edge.forward) {
-        dfs(g, edge.endVertex);
+    while (stack.length > 0) {
+      const vertex = stack.pop();
+
+      vertex.visited = true;
+
+      for (let i = 0; i < vertex.edges.length; i++) {
+        if (vertex.edges[i].forward && !g.vertices[vertex.edges[i].endVertex].visited) {
+          g.vertices[vertex.edges[i].endVertex].visited = true;
+          stack.push(g.vertices[vertex.edges[i].endVertex]);
+        }
       }
+
+      result.unshift(vertex);
     }
+
+    return result;
   }
 
-  console.log('Finished at:', currentVertex);
+  return [g.vertices[v]];
 }
 
 // Read file and process data set
 fs.readFile("data/dfs_test.txt", "utf8", (err, data) => {
-  const graph = new Graph(processEdges(data, true));
-  
-  console.log(graph);
-  dfs(graph, 6)
+  const graph = new Graph(processEdges(data, true)),
+        res   = dfs(graph, 6);
+
+  for (const vertex of res) console.log(vertex);
 })
