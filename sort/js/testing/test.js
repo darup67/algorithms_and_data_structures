@@ -1,8 +1,8 @@
 'use strict';
 
-const quicksort = require('./quicksort.js'),
-      mergesort = require('./mergesort.js'),
-      heapsort  = require('./heapsort.js');
+const quicksort = require('./../quicksort.js'),
+      mergesort = require('./../mergesort.js'),
+      heapsort  = require('./../heapsort.js');
 
 let testArr = [];
 for (let i = 0; i < 10; i++) {
