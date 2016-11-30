@@ -34,8 +34,7 @@ This repo contains all my computer science studies, prep, and general algorithmi
  - Counting inversions
 
 
-### Sources
-Mostly drawn from and/or inspired by:
+### Primary Sources
 - **_The Algorithm Design Manual_ (Steven S. Skiena)**
  - (+) Great resource and reference manual, great place to start
  - (+) Wide range of problems covered and other sources for further study
