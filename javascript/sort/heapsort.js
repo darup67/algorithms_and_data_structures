@@ -5,7 +5,7 @@
 
 'use strict';
 
-const Heap = require('./../../heap/js/heap.js');
+const Heap = require('./../binary_trees/heap.js');
 
 function heapsort (arr) {
 	let heap = new Heap();
