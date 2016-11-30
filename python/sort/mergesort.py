@@ -32,5 +32,3 @@ def merge(listA, listB):
                 listB_count += 1
 
     return result
-
-print(mergesort([5,5785,3,6,88,2,5675,1,24,90]))
