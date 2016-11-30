@@ -3,28 +3,35 @@
 
 This repo contains all my computer science studies, prep, and general algorithmic experiments.  It combines two previous repos, js_algorithms and js_data_structures.  Seeing as how many algorithms need the data structures to function anyway, it made sense to combine them, and add my work in other languages at the same time.
 
-### Algorithm Library
+### Javascript Library
 - **Sorting**
  - Insertion sort
  - Quicksort, optimized\*
  - Mergesort, optimized\*
  - Heapsort
+- **Divide and Conquer**
+ - Integer multiplication (Karatsuba)
 - **Graph**
  - DFS, recursive
  - DFS, iterative
  - Topological sort
  - SCC (strongly connected components)
-- **Integer multiplication (Karatsuba)**
  
 ###### \* On random integers (n > 1M), outperforms Javascript library sort()
 
-### Data Structure Library
-- **Linked list**
+- **Linked lists**
  - Singly, optimized
  - Doubly
 - **Trees**
+ - Heap
  - AVL (coming soon)
-- **Heap**
+
+
+### Python Library
+- **Sorting**
+ - Mergesort
+- **Divide and Conquer**
+ - Counting inversions
 
 
 ### Sources
