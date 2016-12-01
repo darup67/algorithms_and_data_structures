@@ -13,7 +13,7 @@ def dijkstra(graph):
                     length = pathLengths[visited.index(vertex)] + edge['weight']
                     
                     if (length < currPath['length']):
-                        currPath = ({'endVertex': edge['endVertex'] - 1, 'length': length})
+                        currPath = {'endVertex': edge['endVertex'] - 1, 'length': length}
 
         visited.append(currPath['endVertex'])
         pathLengths.append(currPath['length'])
@@ -23,5 +23,21 @@ def dijkstra(graph):
     
     return sorted(result, key=lambda k: k['vertex'])
 
-graph = [[{'endVertex': 2, 'weight': 1}, {'endVertex': 8, 'weight': 2}], [{'endVertex': 1, 'weight': 1}, {'endVertex': 3, 'weight': 1}], [{'endVertex': 2, 'weight': 1}, {'endVertex': 4, 'weight': 1}], [{'endVertex': 3, 'weight': 1}, {'endVertex': 5, 'weight': 1}], [{'endVertex': 4, 'weight': 1}, {'endVertex': 6, 'weight': 1}], [{'endVertex': 5, 'weight': 1}, {'endVertex': 7, 'weight': 1}], [{'endVertex': 6, 'weight': 1}, {'endVertex': 8, 'weight': 1}], [{'endVertex': 7, 'weight': 1}, {'endVertex': 1, 'weight': 2}]]
+def get_graph_from_file(filename):
+    newList, result = list(open(filename)), []
+
+    for item in newList:
+        vertex, edges = item.rstrip('\t\n').split('\t'), []
+
+        for edge in vertex[1:]:
+            edgeSplit = edge.split(',')
+            edges.append({'endVertex': int(edgeSplit[0]), 'weight': int(edgeSplit[1])})
+
+        result.append(edges)
+    
+    return result
+
+##graph = [[{'endVertex': 2, 'weight': 1}, {'endVertex': 8, 'weight': 2}], [{'endVertex': 1, 'weight': 1}, {'endVertex': 3, 'weight': 1}], [{'endVertex': 2, 'weight': 1}, {'endVertex': 4, 'weight': 1}], [{'endVertex': 3, 'weight': 1}, {'endVertex': 5, 'weight': 1}], [{'endVertex': 4, 'weight': 1}, {'endVertex': 6, 'weight': 1}], [{'endVertex': 5, 'weight': 1}, {'endVertex': 7, 'weight': 1}], [{'endVertex': 6, 'weight': 1}, {'endVertex': 8, 'weight': 1}], [{'endVertex': 7, 'weight': 1}, {'endVertex': 1, 'weight': 2}]]
+graph = get_graph_from_file('data/dijkstraData.txt')
 pp.pprint(dijkstra(graph))            
+

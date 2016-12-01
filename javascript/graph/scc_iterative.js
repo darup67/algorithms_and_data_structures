@@ -2,7 +2,8 @@
 
 const fs           = require('fs'),
       Graph        = require('./data/graph.js').Graph,
-      processEdges = require('./data/graph.js').processEdges;
+      processEdges = require('./data/graph.js').processEdges,
+      debug        = process.argv[2];
 
 // Outer loop for SCC
 function findSCC (g, debug) {
