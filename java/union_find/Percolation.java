@@ -1,4 +1,4 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
    private int n;                        // Grid dimension
@@ -82,6 +82,7 @@ public class Percolation {
    
    // Returns true if the system percolates
    public boolean percolates() {
+      if (n == 1) return isOpen(1, 1);
       return uf.connected(0, nSquared + 1);
    }
 
