@@ -2,25 +2,33 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
-   private double[] results;  // percolation threshold as open site percentage
+   private int trials;        // number of trial percolations
+   private double[] results;  // percolation threshold (open site percentage)
    
-   // perform trials independent experiments on an n-by-n grid
+   // perform trials # of independent experiments on an n-by-n grid
    public PercolationStats(int n, int trials) {
       if (n < 1 || trials < 1)
          throw new IllegalArgumentException("n or trials less than 1");
       
-      int[] results = new int[n];
+      this.trials = trials;
+      results = new double[trials];
       
+      int totalSites = n * n;
       for (int i = 0; i < trials; i++) {
          Percolation perc = new Percolation(n);
-         int openings = 0;
+         int sitesOpened = 0;
          
          while (!perc.percolates()) {
-            perc.open(StdRandom.uniform(1, n), StdRandom.uniform(1, n));
-            openings++;
+             int rand1 = StdRandom.uniform(n) + 1;
+             int rand2 = StdRandom.uniform(n) + 1;
+         
+             if (!perc.isOpen(rand1, rand2)) {
+                perc.open(rand1, rand2);
+                sitesOpened++;
+             }
          }
          
-         results[i] = openings / n;  // implicit conversion to double
+         results[i] = (double) sitesOpened / totalSites;
       }
    }
    
@@ -36,12 +44,12 @@ public class PercolationStats {
    
    // low  endpoint of 95% confidence interval
    public double confidenceLo() {
-      return mean() - ((1.96 * stddev()) / Math.sqrt(results.length));
+      return mean() - ((1.96 * stddev()) / Math.sqrt(trials));
    }
    
    // high endpoint of 95% confidence interval
    public double confidenceHi() {
-      return mean() + ((1.96 * stddev()) / Math.sqrt(results.length));
+      return mean() + ((1.96 * stddev()) / Math.sqrt(trials));
    }
 
    // test client
@@ -49,26 +57,10 @@ public class PercolationStats {
       int n = StdIn.readInt();
       int trials = StdIn.readInt();
      
-      /*PercolationStats stats = new PercolationStats(n, trials);
+      PercolationStats stats = new PercolationStats(n, trials);
       StdOut.println("mean                    = " + stats.mean());
       StdOut.println("stddev                  = " + stats.stddev());
       StdOut.println("95% confidence interval = " + stats.confidenceLo()
-                        + ", " + stats.confidenceHi());*/
-      
-      Percolation perc = new Percolation(n);
-      int openings = 0;
-      
-      while (!perc.percolates()) {
-         int rand1 = StdRandom.uniform(1, n + 1);
-         int rand2 = StdRandom.uniform(1, n + 1);
-         
-         if (!perc.isOpen(rand1, rand2)) {
-            perc.open(rand1, rand2);
-            openings++;
-            StdOut.println(rand1 + " " + rand2);
-         }
-      }
-      
-      StdOut.println(openings);
+                        + ", " + stats.confidenceHi());
    }
 }
