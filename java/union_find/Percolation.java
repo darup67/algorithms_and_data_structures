@@ -1,31 +1,28 @@
 import edu.princeton.cs.algs4.*;
 
 public class Percolation {
-   private int nSquared;
-   private boolean[][] openGrid;
-   private boolean[][] fullGrid;
-   private WeightedQuickUnionUF uf;
+   private int nSquared;             // Grid size (n * n)
+   private boolean[][] openGrid;     // false == closed site, true == open
+   private WeightedQuickUnionUF uf;  // Union-find structure
    
+   // Converts x,y grid reference into UF site reference
    private int xyTo1D(int row, int col) {
       return ((row - 1) * (openGrid.length - 1)) + col;
    }
    
+   // Constructor
    public Percolation(int n) {
       nSquared = n * n;
       openGrid = new boolean[n + 1][n + 1];
-      fullGrid = new boolean[n + 1][n + 1];
       uf = new WeightedQuickUnionUF(nSquared + 2);
       
       // Union top row to virtual top site
       for (int i = 1; i <= n; i++) {
          uf.union(0, i);
       }
-      // Union bottom row to virtual bottom site
-      /*for (int i = nSquared - n + 1; i <= nSquared; i++) {
-         uf.union(i, nSquared + 1);
-      }*/
    }
    
+   // Opens given site and connects it to adjacent open sites
    public void open(int row, int col) {
       openGrid[row][col] = true;
       
@@ -45,45 +42,28 @@ public class Percolation {
       if (col + 1 < openGrid.length && isOpen(row, col + 1)) {
          uf.union(xyTo1D(row, col + 1), xyTo1D(row, col));
       }
-      
-      if (row == 1)
-         fullGrid[row][col] = true;
-      /*if (row == fullGrid.length && uf.connected(0, xyTo1D(row, col)))
-         fullGrid[row][col] = true;*/
-      
-      for (int i = 2; i < fullGrid.length; i++) {
-         for (int j = 1; j < fullGrid.length; j++) {
-            if (!fullGrid[i][j] && uf.connected(0, xyTo1D(i, j))) {
-               fullGrid[i][j] = true;
-            }
-         }
-      }
    }
    
+   // Returns true if a given site is open
    public boolean isOpen(int row, int col) {
       return openGrid[row][col];
    }
    
+   // Returns true if a given site is full
    public boolean isFull(int row, int col) {
-      return fullGrid[row][col];
+      if (openGrid[row][col] && uf.connected(0, xyTo1D(row, col)))
+         return true;
+      return false;
    }
    
+   // Returns true if the system percolates
    public boolean percolates() {
       for (int i = nSquared - openGrid.length + 2; i <= nSquared; i++) {
          if (uf.connected(0, i)) return true;
       }
       return false;
-//      return uf.connected(0, nSquared + 1);
    }
 
-   public static void main(String[] args) {
-      int n = StdIn.readInt();
-      Percolation perc = new Percolation(n);
-
-      while (!StdIn.isEmpty()) {
-         int p = StdIn.readInt();
-         int q = StdIn.readInt();
-         perc.open(p, q);
-      }
-   }
+   // Main for testing (not implemented)
+   public static void main(String[] args) {}
 }
