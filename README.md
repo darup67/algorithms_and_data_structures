@@ -30,8 +30,21 @@ This repo contains all my computer science studies, prep, and general algorithmi
 ### Python Library
 - **Sorting**
  - Mergesort
+ - Quicksort
 - **Divide and Conquer**
  - Counting inversions
+- **Graph**
+ - Shortest paths (Dijkstra) 
+
+
+### Java Library
+- **Graph**
+ - Percolation (see https://en.wikipedia.org/wiki/Percolation_theory)
+ 
+- **Union-find**
+ - Quick-find
+ - Quick-union
+ - Weighted quick-union with path compression (O(log\* n))
 
 
 ### Primary Sources
@@ -56,7 +69,7 @@ Most examples will be in one of the following:
 - **Python 3**
 - **Java**
 
-My "official" training is in web development, so most examples will be in JS due to time constraints.  In my opinion, the biggest challenge of working with many languages is understanding various compiler/interpreter error messages.  Haskell's interpreter seems to give cryptic error messages at first, but after a week or so of practice, I'd take it any day over the C++ compiler for Visual Studio (ask me again in a few months and maybe you'll get a different answer).  As I can solve most bugs easily with a few `console.log()` statements in Node.js, it remains my go-to environment.
+My "official" training is in web development, so most examples will be in JS due to time constraints.  In my opinion, the biggest challenge of working with many languages is understanding various compiler/interpreter error messages.  Haskell's interpreter seems to give cryptic error messages at first, but after a week or so of practice, I'd take it any day over the C++ compiler for Visual Studio (ask me again in a few months and maybe you'll get a different answer).
 
 
 ### Quality / Reuse
