@@ -1,3 +1,5 @@
+import math
+
 count = 0
 
 def quicksort(inputList, lo=0, hi=None):
@@ -10,6 +12,24 @@ def quicksort(inputList, lo=0, hi=None):
     ## Base case: if the subarray inputList[lo:hi] is of length 1 or less, return
     if hi - lo < 2:
         return
+
+    ## Median-of-three calculation
+    mid = math.floor(((hi - 1) - lo) / 2) + lo
+##    print('{} {} {}'.format(inputList[lo], inputList[mid], inputList[hi - 1]))
+
+    if inputList[lo] >= inputList[mid] and inputList[lo] <= inputList[hi - 1]:
+        pivotChoice = lo
+    elif inputList[lo] >= inputList[hi - 1] and inputList[lo] <= inputList[mid]:
+        pivotChoice = lo
+    elif inputList[mid] >= inputList[lo] and inputList[mid] <= inputList[hi - 1]:
+        pivotChoice = mid
+    elif inputList[mid] >= inputList[hi - 1] and inputList[mid] <= inputList[lo]:
+        pivotChoice = mid
+    else:
+        pivotChoice = hi - 1
+    
+    ## Choose pivot as pivotChoice, swap with lo
+    inputList[pivotChoice], inputList[lo] = inputList[lo], inputList[pivotChoice]
 
     ## Naive pivot selection (intentional for this example)
     pivot, i = lo, lo  ## where i is the index of the last value lower than the pivot
@@ -45,7 +65,7 @@ def validate(inputList):
             return False;
     return True
 
-testList = get_list_from_file('data/QuickSort.txt')
+testList = get_list_from_file('../data/QuickSort.txt')
 quicksort(testList)
 print(validate(testList))
 print(count)

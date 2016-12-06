@@ -11,6 +11,9 @@ def quicksort(inputList, lo=0, hi=None):
     if hi - lo < 2:
         return
 
+    ## Choose pivot as hi - 1, swap with lo
+    inputList[hi - 1], inputList[lo] = inputList[lo], inputList[hi - 1]
+
     ## Naive pivot selection (intentional for this example)
     pivot, i = lo, lo  ## where i is the index of the last value lower than the pivot
 
@@ -45,7 +48,7 @@ def validate(inputList):
             return False;
     return True
 
-testList = get_list_from_file('data/QuickSort.txt')
+testList = get_list_from_file('../data/QuickSort.txt')
 quicksort(testList)
 print(validate(testList))
 print(count)
