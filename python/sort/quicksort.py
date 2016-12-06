@@ -1,28 +1,28 @@
-def quicksort(inputList, lo, hi):
-    print(" ")
-    print("lo, hi: {} {}".format(lo, hi))
+def quicksort(inputList, lo=0, hi=None):
+    ## Default value for hi (not possible to assign in parameter list)
+    if hi == None:
+        hi = len(inputList)  ## the hi value for range is exclusive
 
-    diff = hi - lo
-    if diff < 2:
-        print(diff)
+    ## Base case: if the subarray inputList[lo:hi] is of length 1 or less, return
+    if hi - lo < 2:
         return
-    
-    pivot = lo
-    i = lo + 1
 
+    ## Naive pivot selection (intentional for this example)
+    pivot, i = lo, lo  ## where i is the index of the last value lower than the pivot
+
+    ## Partition: swap all values lower than pivot into the partition [lo + 1 ... i]
     for j in range(lo + 1, hi):
         if inputList[j] < inputList[pivot]:
-            inputList[j], inputList[i] = inputList[i], inputList[j]
-            print("swap at {},{}: {} <-> {}".format(i, j, inputList[i], inputList[j]))
             i = i + 1
+            inputList[j], inputList[i] = inputList[i], inputList[j]
 
-    inputList[pivot], inputList[i-1] = inputList[i-1], inputList[pivot]
-    print("pivot swap at {},{}: {} <-> {}".format(pivot, i-1, inputList[i-1], inputList[pivot]))
-    print(inputList)
-    
-    quicksort(inputList, lo, i)
-    quicksort(inputList, i, hi)
+    ## Swap pivot into ith position
+    inputList[pivot], inputList[i] = inputList[i], inputList[pivot]
 
-testList = [4, 3, 7, 2, 6, 9, 1]
-quicksort(testList, 0, len(testList))
+    ## Recursively sort subarrays to the left and right of pivot
+    quicksort(inputList, lo, i)    ## quicksort from lo to i - 1 (pivot at i)
+    quicksort(inputList, i+1, hi)  ## quicksort from i + 1 to hi
+
+testList = [49, 4, 3, 22, 7, 45, 2, 6, 11, 9, 17, 1, 37]
+quicksort(testList)
 print(testList)
