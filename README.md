@@ -16,7 +16,7 @@ This repo contains all my computer science studies, prep, and general algorithmi
  - DFS, iterative
  - Topological sort
  - SCC (strongly connected components)
- 
+
 ###### \* On random integers (n > 1M), outperforms Javascript library sort()
 
 - **Linked lists**
@@ -40,7 +40,6 @@ This repo contains all my computer science studies, prep, and general algorithmi
 ### Java Library
 - **Graph**
  - Percolation (see https://en.wikipedia.org/wiki/Percolation_theory)
- 
 - **Union-find**
  - Quick-find
  - Quick-union
