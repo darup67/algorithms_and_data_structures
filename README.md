@@ -22,8 +22,8 @@ This repo contains all my computer science studies, prep, and general algorithmi
 - **Linked lists**
  - Singly, optimized
  - Doubly
-- **Trees**
- - Heap
+- **Heap**
+- **Binary search trees**
  - AVL (coming soon)
 
 
@@ -34,7 +34,9 @@ This repo contains all my computer science studies, prep, and general algorithmi
 - **Divide and Conquer**
  - Counting inversions
 - **Graph**
- - Shortest paths (Dijkstra) 
+ - Shortest paths (Dijkstra)
+- **Heap**
+ - Median maintenance
 
 
 ### Java Library
