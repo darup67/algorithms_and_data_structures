@@ -1,4 +1,5 @@
 from heapq import heappush, heappop
+from functools import reduce
 
 def maintain_median(inputList):
     leftHeap, rightHeap, medians = [-inputList[0]], [], [inputList[0]]
@@ -21,11 +22,20 @@ def maintain_median(inputList):
                 medians += [rightHeap[0]]
         else:
             medians += [-leftHeap[0]]
-
-##        print(leftHeap)
-##        print(rightHeap)
-##        print(medians)
         
     return medians;
 
-print(maintain_median([7,2,9,6,3]))
+def sum_mod(inputList, modVal):
+    sum = reduce(lambda x,y: x+y, inputList)
+    return sum % modVal
+
+def get_list_from_file(filename):
+    newList, result = list(open(filename)), []
+
+    for item in newList:
+        result.append(int(item.rstrip('\n')))
+    
+    return result
+
+medianList = maintain_median(get_list_from_file('data/Median.txt'))
+print(sum_mod(medianList, 10000))
