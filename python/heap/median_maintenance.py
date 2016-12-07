@@ -17,11 +17,11 @@ def maintain_median(inputList):
 
         if len(medians) % 2 == 0:
             if len(leftHeap) > len(rightHeap):
-                medians += [-leftHeap[0]]
+                medians.append(-leftHeap[0])
             else:
-                medians += [rightHeap[0]]
+                medians.append(rightHeap[0])
         else:
-            medians += [-leftHeap[0]]
+            medians.append(-leftHeap[0])
         
     return medians;
 
