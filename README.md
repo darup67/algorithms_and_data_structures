@@ -42,6 +42,7 @@ This repo contains all my computer science studies, prep, and general algorithmi
 ### Java Library
 - **Graph**
  - Percolation (see https://en.wikipedia.org/wiki/Percolation_theory)
+- **Deque** (combined stack/queue via doubly linked list)
 - **Union-find**
  - Quick-find
  - Quick-union
