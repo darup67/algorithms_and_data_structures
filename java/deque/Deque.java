@@ -63,6 +63,8 @@ public class Deque<Item> implements Iterable<Item> {
          first.prev = newNode;
          first = newNode;
       }
+      
+      size++;
    }
 
    // add the item to the end
@@ -78,6 +80,8 @@ public class Deque<Item> implements Iterable<Item> {
          last.next = newNode;
          last = newNode;
       }
+      
+      size++;
    }        
    
    // remove and return the item from the front
@@ -94,6 +98,7 @@ public class Deque<Item> implements Iterable<Item> {
          last = null;
       }
       
+      size--;
       return item;
    }
    
@@ -111,6 +116,7 @@ public class Deque<Item> implements Iterable<Item> {
          last = null;
       }
       
+      size--;
       return item;
    }
    
@@ -123,15 +129,26 @@ public class Deque<Item> implements Iterable<Item> {
    public static void main(String[] args) { 
       Deque<Integer> deque = new Deque<Integer>();
       
-      int[] testArr = {1, 2, 3, 4, 5};
-      for (int e : testArr) deque.addLast(e);
+      int[] testArr = {5, 4, 3, 2, 1};
+      for (int e : testArr) deque.addFirst(e);
+      for (int e : deque) StdOut.println(e);
+      StdOut.println("Size: " + deque.size());
+      StdOut.println("");
       
+      int[] testArrTwo = {6, 7, 8, 9, 10};
+      for (int e : testArrTwo) deque.addLast(e);
       for (int e : deque) StdOut.println(e);
+      StdOut.println("Size: " + deque.size());
       StdOut.println("");
+      
       StdOut.println(deque.removeFirst());
       StdOut.println(deque.removeFirst());
       StdOut.println(deque.removeFirst());
+      StdOut.println(deque.removeLast());
+      StdOut.println(deque.removeLast());
+      StdOut.println(deque.removeLast());
       StdOut.println("");
       for (int e : deque) StdOut.println(e);
+      StdOut.println("Size: " + deque.size());
    }
 }
