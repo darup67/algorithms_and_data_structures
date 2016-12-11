@@ -2,9 +2,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
-   private Node first    = null;
-   private Node last     = null;
-   private int  size     = 0;
+   private Node first = null;
+   private Node last  = null;
+   private int  size  = 0;
    
    // linked list Node class
    private class Node {
@@ -15,7 +15,7 @@ public class Deque<Item> implements Iterable<Item> {
       public Node(Item item) { this.item = item; }
    }
    
-   // deque Iterator class
+   // Deque Iterator class
    private class ListIterator implements Iterator<Item> {
       private Node current = first;
       
@@ -42,7 +42,7 @@ public class Deque<Item> implements Iterable<Item> {
    
    // is the deque empty?
    public boolean isEmpty() {
-      return (size == 0);
+      return size == 0;
    }
    
    // return the number of items on the deque
