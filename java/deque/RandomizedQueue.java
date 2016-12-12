@@ -89,7 +89,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
       array[randIndex] = array[size];  // copy last item to randIndex
       array[size] = null;              // delete last item
       
-      if (size == array.length / 4) shrinkArray();
+      if (size > 1 && size == array.length / 4) shrinkArray();
       return item;
    }
    
@@ -97,7 +97,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
    public Item sample() {
       if (size == 0) throw new NoSuchElementException();
       
-      return array[StdRandom.uniform(size - 1)];
+      return array[StdRandom.uniform(size)];
    }
    
    // return an independent iterator over items in random order
@@ -109,34 +109,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
    public static void main(String[] args) { 
       RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
       
-      rq.enqueue(37);
-      rq.enqueue(58);
-      rq.enqueue(14);
-      rq.enqueue(94);
-      rq.enqueue(43);
-      rq.enqueue(76);
-      
-      StdOut.println(rq.sample());
-      StdOut.println(rq.sample());
-      StdOut.println("");
-         
-      StdOut.println(rq.dequeue());
-      StdOut.println(rq.dequeue());
-      StdOut.println(rq.dequeue());
-      StdOut.println(rq.dequeue());
-      StdOut.println(rq.dequeue());
-      StdOut.println(rq.dequeue());
-      StdOut.println("");
-      
-      for (int x : rq) StdOut.println(x);
-      StdOut.println("");
-      
       for (int i = 0; i < 100; i++) {
-         rq.enqueue(StdRandom.uniform(1000));
-      }
-      
-      for (int i = 0; i < 100; i++) {
-         StdOut.println(rq.dequeue());
+         if (StdRandom.uniform(2) == 1 && !rq.isEmpty()) {
+            StdOut.println("Dequeue: " + rq.dequeue());
+         } else {
+            int rand = StdRandom.uniform(1000);
+            StdOut.println("Enqueue: " + rand);
+            rq.enqueue(rand);
+         }
+         StdOut.println("Size: " + rq.size());
+         StdOut.println();
       }
    }
 }

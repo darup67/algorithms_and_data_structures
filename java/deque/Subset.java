@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class Subset {
    // check array for item
-   private static boolean isInArray (int[] array, int value) {
+   private static boolean isInArray(int[] array, int value) {
       for (int x : array) {
          if (value == x) return true;
       }
