@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -147,8 +149,17 @@ public class Deque<Item> implements Iterable<Item> {
       StdOut.println(deque.removeLast());
       StdOut.println(deque.removeLast());
       StdOut.println(deque.removeLast());
-      StdOut.println("");
+      StdOut.println(deque.removeFirst());
+      StdOut.println(deque.removeFirst());
+      StdOut.println(deque.removeFirst());
+      StdOut.println(deque.removeFirst());
       for (int e : deque) StdOut.println(e);
       StdOut.println("Size: " + deque.size());
+      StdOut.println("");
+      
+      for (int e : testArr) deque.addFirst(e);
+      for (int e : deque) StdOut.println(e);
+      StdOut.println("Size: " + deque.size());
+      StdOut.println("");
    }
 }

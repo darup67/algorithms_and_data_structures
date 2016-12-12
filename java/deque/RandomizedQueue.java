@@ -1,35 +1,12 @@
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
    private Item[] array = (Item[]) new Object[1];  // RQ array
    private int    size  = 0;                       // number of items in RQ
-   
-   // double size of array 
-   private void growArray() {
-      Item[] temp = (Item[]) new Object[array.length * 2];
-      for (int i = 0; i < array.length; i++) {
-         temp[i] = array[i];
-      }
-      StdOut.println("Before length: " + array.length);
-      array = temp;
-      StdOut.println("Temp length: " + temp.length);
-      StdOut.println("After length: " + array.length);
-      StdOut.println("");
-   }
-   
-   // halve size of array
-   private void shrinkArray() {
-      Item[] temp = (Item[]) new Object[array.length / 2];
-      for (int i = 0; i < temp.length; i++) {
-         temp[i] = array[i];
-      }
-      StdOut.println("Before length: " + array.length);
-      array = temp;
-      StdOut.println("Temp length: " + temp.length);
-      StdOut.println("After length: " + array.length);
-      StdOut.println("");
-   }
    
    // RandomizedQueue Iterator class
    private class ArrayIterator implements Iterator<Item> {
@@ -65,6 +42,24 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
    public RandomizedQueue() {
       // can't imagine what needs to be done here ...
    }
+   
+   // double size of array 
+   private void growArray() {
+      Item[] temp = (Item[]) new Object[array.length * 2];
+      for (int i = 0; i < array.length; i++) {
+         temp[i] = array[i];
+      }
+      array = temp;
+   }
+   
+   // halve size of array
+   private void shrinkArray() {
+      Item[] temp = (Item[]) new Object[array.length / 2];
+      for (int i = 0; i < temp.length; i++) {
+         temp[i] = array[i];
+      }
+      array = temp;
+   }
       
    // is the queue empty?
    public boolean isEmpty() {
@@ -89,7 +84,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
       if (size == 0) throw new NoSuchElementException();
       
       // get random array index
-      int randIndex = size > 1 ? StdRandom.uniform(--size) : --size;
+      int randIndex = StdRandom.uniform(size--);
       Item item = array[randIndex];    // get item at randIndex
       array[randIndex] = array[size];  // copy last item to randIndex
       array[size] = null;              // delete last item
@@ -136,14 +131,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
       for (int x : rq) StdOut.println(x);
       StdOut.println("");
       
-      RandomizedQueue<Integer> rq2 = new RandomizedQueue<Integer>();
-      
       for (int i = 0; i < 100; i++) {
-         rq2.enqueue(StdRandom.uniform(1000));
+         rq.enqueue(StdRandom.uniform(1000));
       }
       
       for (int i = 0; i < 100; i++) {
-         StdOut.println(rq2.dequeue());
+         StdOut.println(rq.dequeue());
       }
    }
 }
