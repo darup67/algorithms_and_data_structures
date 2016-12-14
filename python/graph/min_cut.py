@@ -72,13 +72,20 @@ def active_count(g):
 
 def min_cut(g):
     minimum = 100000000;
-    
-    for x in range(0, len(g.vertices) - 3):
-        random_cut(g)
 
-    for v in g.vertices:
-        if v.active:
-            return len(v.current)
+    for i in range(0, 1000):
+        for x in range(0, len(g.vertices) - 3):
+            random_cut(g)
+
+        for v in g.vertices[1:]:
+            if v.active:
+                if len(v.current) < minimum:
+                    minimum = len(v.current)
+            v.current = v.original[:]
+            v.contains = [v.contains[0]]
+            v.active = True
+
+    return minimum
 
 def is_in_list(inputList, inputEdge):
     for edge in inputList:
@@ -95,7 +102,7 @@ def get_graph_from_file(filename):
 ##        graph.vertices.append([])
 
     for item in newList:
-        numList = list(map(int, item.rstrip('\n').split(' ')))
+        numList = list(map(int, item.rstrip('\t\n').split('\t')))
         graph.vertices.append(Vertex(True))
         graph.vertices[numList[0]].contains.append(numList[0])
         
@@ -114,14 +121,14 @@ def get_graph_from_file(filename):
 
     return graph
 
-graph = get_graph_from_file('data/min_cut_1.txt')
+graph = get_graph_from_file('data/kargerMinCut.txt')
 print(min_cut(graph))
 
-for x in range(0, len(graph.vertices)):
-    print(graph.vertices[x].original)
-    print(graph.vertices[x].current)
-    print(graph.vertices[x].contains)
-    print(graph.vertices[x].active)
-    print('')
+##for x in range(0, len(graph.vertices)):
+##    print(graph.vertices[x].original)
+##    print(graph.vertices[x].current)
+##    print(graph.vertices[x].contains)
+##    print(graph.vertices[x].active)
+##    print('')
 
 ##print(min_cut(graph))
