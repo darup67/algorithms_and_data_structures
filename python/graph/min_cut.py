@@ -1,4 +1,4 @@
-import random
+import random, copy
 
 numVertices = 0
 
@@ -14,26 +14,52 @@ def random_cut(g):
         elif edge[1] == randEdge[0]:
             edge[1] = randEdge[1]
 
-    print('Before:')
-    for edge in g:
-        print(edge)
-    print('')
+##    print('Before:')
+##    for edge in g:
+##        print(edge)
+##    print('')
     
-    g[:] = (edge for edge in g if edge[0] != edge[1] and not is_in_list(g, edge))
+    g[:] = (edge for edge in g if edge[0] != edge[1])
 
-    print('After:')
-    for edge in g:
-        print(edge)
-    print('')
+##    print('After:')
+##    for edge in g:
+##        print(edge)
+##    print('')
+
+    if len(g) < 3:
+        for edge in g:
+            print(edge)
+        print('')
 
 
-def min_cut(g):
-    global numVertices
-    while (numVertices > 2):
-        random_cut(g)
-        numVertices -= 1
+def min_cut(g, n):
+    minimum = 100000000;
 
-    return len(g)
+    for x in range(0, 100):
+        temp_g, temp_n = copy.deepcopy(g), n
+
+##        for edge in temp_g:
+##            print(edge)
+##        print('')
+        
+        while (temp_n > 2):
+            random_cut(temp_g)
+            temp_n -= 1
+
+        unique = 0
+        for i in range(0, len(temp_g)):
+            for j in range (i + 1, len(temp_g)):
+                if temp_g[i][0] == temp_g[j][0] and temp_g[i][1] == temp_g[j][1]:
+                    break
+                elif temp_g[i][0] == temp_g[j][1] and temp_g[i][1] == temp_g[j][0]:
+                    break
+            else:
+                unique += 1
+        
+        if unique < minimum:
+            minimum = unique
+
+    return minimum
 
 
 def is_in_list(inputList, inputEdge):
@@ -60,9 +86,9 @@ def get_graph_from_file(filename):
     return result
 
 graph = get_graph_from_file('data/min_cut_1.txt')
-for edge in graph:
-    print(edge)
+##for edge in graph:
+##    print(edge)
+##print('')
 
-print('')
-print(min_cut(graph))
+print(min_cut(graph, numVertices))
 
