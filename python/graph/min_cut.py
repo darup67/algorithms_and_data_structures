@@ -3,37 +3,43 @@ from operator import itemgetter
 
 class Graph: pass
 
+class Vertex:
+    def __init__(self, active):
+        self.list = []
+        self.added = []
+        self.active = active
+        
 def random_cut(g):
     ## Get random edge from list of edges
     randEdge = g.edges[random.randrange(0, len(g.edges))]
 
-    ## Connect all edges adjacent to randEdge[0] to randEdge[1]  
-    for edge in g.edges:
-        if edge[0] == randEdge[0]:
-            edge[0] = randEdge[1]
-            
-        elif edge[1] == randEdge[0]:
-            edge[1] = randEdge[1]
+    ## Select superVertex and deletedVertex
+    if round(random.random()) == 1:
+        superVertex, deletedVertex = g.vertices[randEdge[0]], g.vertices[randEdge[1]]
+    else:
+        superVertex, deletedVertex = g.vertices[randEdge[1]], g.vertices[randEdge[0]]
 
-##    print('Before:')
+    ## Connect all edges adjacent to deletedVertex to superVertex
+    for num in deletedVertex.list:
+        if num == superVertex.list[0]:
+            badEdge = [edge for edge in g.edges if (edge[0]==superVertex.list[0] and edge[1]==deletedVertex.list[0])
+                                                    or (edge[1]==superVertex.list[0] and edge[0]==deletedVertex.list[0])]
+            badEdge[0][2] = False
+        else:
+            if num not in superVertex.list:
+                superVertex.added.append(num)
+
+    deletedVertex.active = False
+##    randEdge[2] = False
+
+##    for x in range(0, len(g.vertices)):
+##        print(g.vertices[x].list)
+##        print(g.vertices[x].added)
+##        print(g.vertices[x].active)
+
 ##    for edge in g.edges:
 ##        print(edge)
 ##    print('')
-    
-    g.edges[:] = (edge for edge in g.edges if edge[0] != edge[1])
-    for edge in g.edges:
-        if edge[0] > edge[1]:
-            edge[0], edge[1] = edge[1], edge[0]
-
-##    print('After:')
-##    for edge in g.edges:
-##        print(edge)
-##    print('')
-
-    if len(g.edges) < 3:
-        for edge in g.edges:
-            print(edge)
-        print('')
 
 def min_cut(g):
     minimum = 100000000;
@@ -74,32 +80,37 @@ def is_in_list(inputList, inputEdge):
 
 def get_graph_from_file(filename):
     newList, graph = list(open(filename)), Graph()
-    graph.vertices, graph.edges = [], []
+    graph.vertices, graph.edges = [Vertex(False)], []
     
-    for x in range(0, len(newList) + 1):
-        graph.vertices.append([])
+##    for x in range(0, len(newList) + 1):
+##        graph.vertices.append([])
 
     for item in newList:
         numList = list(map(int, item.rstrip('\n').split(' ')))
+        graph.vertices.append(Vertex(True))
+        graph.vertices[numList[0]].list.append(numList[0])
         
         for edgeNum in numList[1:]:
             if numList[0] < edgeNum:
-                edge = [numList[0], edgeNum]
+                edge = [numList[0], edgeNum, True]
             else:
-                edge = [edgeNum, numList[0]]
+                edge = [edgeNum, numList[0], True]
             
             if not is_in_list(graph.edges, edge):
                 graph.edges.append(edge)
             
-            graph.vertices[numList[0]].append(edge)
+            graph.vertices[numList[0]].list.append(edgeNum)
 
     return graph
 
 graph = get_graph_from_file('data/min_cut_1.txt')
-##for vertex in graph.vertices:
-##    print(vertex)
-##for edge in graph.edges:
-##    print(edge)
-##print('')
+random_cut(graph)
+for x in range(0, len(graph.vertices)):
+    print(graph.vertices[x].list)
+    print(graph.vertices[x].added)
+    print(graph.vertices[x].active)
+for edge in graph.edges:
+    print(edge)
+print('')
 
-print(min_cut(graph))
+##print(min_cut(graph))
