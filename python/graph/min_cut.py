@@ -5,71 +5,80 @@ class Graph: pass
 
 class Vertex:
     def __init__(self, active):
-        self.list = []
-        self.added = []
+        self.original = []
+        self.current = []
+        self.contains = []
         self.active = active
         
 def random_cut(g):
-    ## Get random edge from list of edges
-    randEdge = g.edges[random.randrange(0, len(g.edges))]
+    ## Get random edge from available edges
+    edgeList = []
 
-    ## Select superVertex and deletedVertex
-    if round(random.random()) == 1:
-        superVertex, deletedVertex = g.vertices[randEdge[0]], g.vertices[randEdge[1]]
-    else:
-        superVertex, deletedVertex = g.vertices[randEdge[1]], g.vertices[randEdge[0]]
+    for v in g.vertices:
+        if v.active:
+            for num in v.current:
+                edgeList.append([v.contains[0], num])
+
+##    print(edgeList)
+
+    ## Select random edge
+    randEdge = edgeList[random.randrange(0, len(edgeList))]
+##    print('canary 1')
+
+    ## Set superVertex and deletedVertex
+    superVertex, deletedVertex = g.vertices[randEdge[0]], g.vertices[randEdge[1]]
+##    print('canary 2')
+
+    ## Add deletedVertex.contains to superVertex.contains
+    superVertex.contains += deletedVertex.contains
+##    print('canary 3')
 
     ## Connect all edges adjacent to deletedVertex to superVertex
-    for num in deletedVertex.list:
-        if num == superVertex.list[0]:
-            badEdge = [edge for edge in g.edges if (edge[0]==superVertex.list[0] and edge[1]==deletedVertex.list[0])
-                                                    or (edge[1]==superVertex.list[0] and edge[0]==deletedVertex.list[0])]
-            badEdge[0][2] = False
-        else:
-            if num not in superVertex.list:
-                superVertex.added.append(num)
+    superVertex.current += [num for num in deletedVertex.current if num != superVertex.contains[0]]
+##    for y in deletedVertex.current:
+##        if y != superVertex.contains[0]:
+##            superVertex.current.append(y)
 
+##    print('canary 4')
+
+##    deletedVertex.contains = [deletedVertex.contains[0]]
     deletedVertex.active = False
-##    randEdge[2] = False
 
-##    for x in range(0, len(g.vertices)):
-##        print(g.vertices[x].list)
-##        print(g.vertices[x].added)
+    ## Renumber all references to deleted vertex
+    for v in g.vertices:
+        if v.active:
+            for x in range(0, len(v.current)):
+                if v.current[x] == deletedVertex.contains[0]:
+                    v.current[x] = superVertex.contains[0]
+            v.current = [num for num in v.current if num != v.contains[0]]
+
+##    print('canary 5')
+
+##    for x in range(0, len(graph.vertices)):
+##        print(g.vertices[x].original)
+##        print(g.vertices[x].current)
+##        print(g.vertices[x].contains)
 ##        print(g.vertices[x].active)
+##        print('')
 
-##    for edge in g.edges:
-##        print(edge)
-##    print('')
+def active_count(g):
+    count = 0
+
+    for v in g.vertices:
+        if v.active:
+            count += 1
+
+    return count
 
 def min_cut(g):
     minimum = 100000000;
+    
+    for x in range(0, len(g.vertices) - 3):
+        random_cut(g)
 
-    for x in range(0, 100):
-        temp_g, n = copy.deepcopy(g), len(g.vertices) - 1
-        
-        while (n > 2):
-            random_cut(temp_g)
-            n -= 1
-
-        temp_g.edges.sort(key=itemgetter(0,1))
-##        for edge in temp_g.edges:
-##            print(edge)
-##        print('')
-
-        unique = 1
-        for x in range(0, len(temp_g.edges) - 1):
-            if temp_g.edges[x][0] != temp_g.edges[x+1][0] or temp_g.edges[x][1] != temp_g.edges[x+1][1]:
-                unique += 1
-        
-        if unique < 2:
-            for edge in temp_g.edges:
-                print(edge)
-            print('')
-        
-        if unique < minimum:
-            minimum = unique
-
-    return minimum
+    for v in g.vertices:
+        if v.active:
+            return len(v.current)
 
 def is_in_list(inputList, inputEdge):
     for edge in inputList:
@@ -78,7 +87,7 @@ def is_in_list(inputList, inputEdge):
 
     return False
 
-def get_graph_from_file(filename):
+def get_graph_from_file(filename): 
     newList, graph = list(open(filename)), Graph()
     graph.vertices, graph.edges = [Vertex(False)], []
     
@@ -88,29 +97,31 @@ def get_graph_from_file(filename):
     for item in newList:
         numList = list(map(int, item.rstrip('\n').split(' ')))
         graph.vertices.append(Vertex(True))
-        graph.vertices[numList[0]].list.append(numList[0])
+        graph.vertices[numList[0]].contains.append(numList[0])
         
         for edgeNum in numList[1:]:
-            if numList[0] < edgeNum:
-                edge = [numList[0], edgeNum, True]
-            else:
-                edge = [edgeNum, numList[0], True]
+##            if numList[0] < edgeNum:
+##                edge = [numList[0], edgeNum, True]
+##            else:
+##                edge = [edgeNum, numList[0], True]
+##            
+##            if not is_in_list(graph.edges, edge):
+##                graph.edges.append(edge)
             
-            if not is_in_list(graph.edges, edge):
-                graph.edges.append(edge)
+            graph.vertices[numList[0]].original.append(edgeNum)
             
-            graph.vertices[numList[0]].list.append(edgeNum)
+        graph.vertices[numList[0]].current = graph.vertices[numList[0]].original[:]
 
     return graph
 
 graph = get_graph_from_file('data/min_cut_1.txt')
-random_cut(graph)
+print(min_cut(graph))
+
 for x in range(0, len(graph.vertices)):
-    print(graph.vertices[x].list)
-    print(graph.vertices[x].added)
+    print(graph.vertices[x].original)
+    print(graph.vertices[x].current)
+    print(graph.vertices[x].contains)
     print(graph.vertices[x].active)
-for edge in graph.edges:
-    print(edge)
-print('')
+    print('')
 
 ##print(min_cut(graph))
