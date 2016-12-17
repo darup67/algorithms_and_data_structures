@@ -19,7 +19,7 @@ public class BruteCollinearPoints {
             if (points[j] == null)      throw new NullPointerException();
             if (points[i] == points[j]) throw new IllegalArgumentException();
             
-            for (int k = j + i; k < points.length; k++) {
+            for (int k = j + 1; k < points.length; k++) {
                if (points[k] == null) throw new NullPointerException();
                
                for (int l = k + 1; l < points.length; l++) {
@@ -35,9 +35,6 @@ public class BruteCollinearPoints {
                      
                      Point[] ptArr = {points[i], points[j],
                                       points[k], points[l]};
-//                     for (Point p : ptArr) StdOut.println(p.toString());
-//                     StdOut.println("");
-                     
                      Arrays.sort(ptArr);
 //                     for (Point p : ptArr) StdOut.println(p.toString());
 //                     StdOut.println("");
