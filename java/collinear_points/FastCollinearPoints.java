@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.In;
-//import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class FastCollinearPoints {
@@ -12,10 +12,9 @@ public class FastCollinearPoints {
    public FastCollinearPoints(Point[] points) {
       if (points == null) throw new NullPointerException();
       
+      ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
+      
       pts = points.clone();
-      ArrayList<Point>       endpoints = new ArrayList<Point>();
-      ArrayList<Double>      slopes    = new ArrayList<Double>();
-      ArrayList<LineSegment> lines     = new ArrayList<LineSegment>();
       Point[] ptsCopy = new Point[pts.length - 1];
       
       Arrays.sort(pts);
@@ -32,48 +31,64 @@ public class FastCollinearPoints {
          
          Arrays.sort(ptsCopy, pts[i].slopeOrder());
          
-         for (j = 0; j < ptsCopy.length; j++) {
+         for (j = 0; j < ptsCopy.length - 1; ) {  // No ++ here, see end of loop
             double slopeToJ = pts[i].slopeTo(ptsCopy[j]);
-            int count = 0;
-            k = j;
+            int count = 1;
             
             if (slopeToJ == Double.NEGATIVE_INFINITY)
                throw new IllegalArgumentException();
             
-            while (k < ptsCopy.length &&
-                   pts[i].compareTo(ptsCopy[k]) <= 0 &&
-                   slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
-               
-               count++;
-//               StdOut.println("Count: " + count);
-//               StdOut.println("Compare: " + pts[i].compareTo(ptsCopy[k]));
-//               StdOut.println("");
-               k++;
-            }
-            
-            if (count >= 3) {
+            // If next element in ptsCopy is in order and has same slope
+            k = j + 1;
+            if (pts[i].compareTo(ptsCopy[j]) <= 0 &&
+                slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
 //               StdOut.println(pts[i].toString());
-//               for (int x = 0; x < count; x++) {
-//                  StdOut.println(ptsCopy[j + x].toString());
-//               }
+//               StdOut.println(ptsCopy[j].toString());
+//               StdOut.println(ptsCopy[k].toString());
 //               StdOut.println("");
                
-               Point endpoint = ptsCopy[k - 1];
-               boolean isDuplicate = false;
-               
-               for (int x = 0; x < endpoints.size(); x++) {
-                  if (endpoints.get(x) == endpoint && slopes.get(x) == slopeToJ) {
-                     isDuplicate = true;
-                     break;
-                  }
+               // While there are points left, points are in order, same slope
+               while (k < ptsCopy.length &&
+                   ptsCopy[j].compareTo(ptsCopy[k]) <= 0 &&
+                   slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
+                  count++;
+                  k++;
                }
-               
-               if (!isDuplicate) {
+            
+            // If there are 4 or more contiguous same-slope points
+               if (count >= 3) {
+//                  StdOut.println("Pre-sort:");
+//                  StdOut.println(pts[i].toString());
+//                  for (int x = 0; x < count; x++) {
+//                     StdOut.println(ptsCopy[j + x].toString());
+//                  }
+                  
+//                  Point[] testPoints = new Point[count + 1];
+//                  int y = 1;
+                  
+//                  testPoints[0] = pts[i];
+//                  for (int x = 0; x < count; x++) {
+//                     testPoints[y] = ptsCopy[j + x];
+//                     y++;
+//                  }
+                  
+//                  Arrays.sort(testPoints);
+                  
+//                  StdOut.println("Post-sort:");
+//                  for (Point p : testPoints) {
+//                     StdOut.println(p.toString());
+//                  }
+//                  StdOut.println("");
+                  
+//                  StdOut.println("New line!");
+//                  StdOut.println("");
                   lines.add(new LineSegment(pts[i], ptsCopy[k - 1]));
-                  endpoints.add(endpoint);
-                  slopes.add(slopeToJ);
+                  
+//                  testPoints = null;
                }
             }
+            // Jump past this set of contiguous same-slope points to next point
+            j = k;
          }
       }
       
