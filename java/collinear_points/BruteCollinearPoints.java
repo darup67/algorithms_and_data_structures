@@ -4,13 +4,14 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class BruteCollinearPoints {
-   private LineSegment[] lineSegments;
+   private final LineSegment[] lineSegments;
    
    // finds all line segments containing 4 points
    public BruteCollinearPoints(Point[] points) {
       if (points == null) throw new NullPointerException();
       
       ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
+      Point[] linePoints = new Point[4];
       
       for (int i = 0; i < points.length; i++) {
          if (points[i] == null) throw new NullPointerException();
@@ -33,13 +34,15 @@ public class BruteCollinearPoints {
 //                     StdOut.println(slope1 + ", " + slope2 + ", " + slope3);
 //                     StdOut.println("");
                      
-                     Point[] ptArr = {points[i], points[j],
-                                      points[k], points[l]};
-                     Arrays.sort(ptArr);
+                     linePoints[0] = points[i];
+                     linePoints[1] = points[j];
+                     linePoints[2] = points[k];
+                     linePoints[3] = points[l];
+                     Arrays.sort(linePoints);
 //                     for (Point p : ptArr) StdOut.println(p.toString());
 //                     StdOut.println("");
                      
-                     lines.add(new LineSegment(ptArr[0], ptArr[3]));
+                     lines.add(new LineSegment(linePoints[0], linePoints[3]));
                   }
                }
             }
@@ -59,6 +62,7 @@ public class BruteCollinearPoints {
       return lineSegments;
    }
    
+   // test client
    public static void main(String[] args) {
       // read the n points from a file
       In in = new In(args[0]);
@@ -88,4 +92,3 @@ public class BruteCollinearPoints {
       StdDraw.show();
    }
 }
-
