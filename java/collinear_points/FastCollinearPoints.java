@@ -1,90 +1,75 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
+//import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class FastCollinearPoints {
-   private LineSegment[] lineSegments;
-   
-   // datatype of previously built lines with slope and endpoint
-//   private class PointSlope {
-//      private final Point endpoint;
-//      private final double slope;
-//      
-//      public PointSlope(Point endpoint, double slope) {
-//         this.endpoint = endpoint;
-//         this.slope = slope;
-//      }
-//      
-//      @Override
-//      public boolean equals(PointSlope that) {
-//         return that.endpoint == this.endpoint && that.slope == this.slope;
-//      }
-//      
-//      @Override
-//      public int hashCode() {
-//         return 
-//      }
-//   }
+   private final Point[]       pts;           // copy of input array
+   private final LineSegment[] lineSegments;  // set of lines to be drawn
    
    // finds all line segments containing 4 or more points
    public FastCollinearPoints(Point[] points) {
       if (points == null) throw new NullPointerException();
       
+      pts = points.clone();
       ArrayList<Point>       endpoints = new ArrayList<Point>();
       ArrayList<Double>      slopes    = new ArrayList<Double>();
       ArrayList<LineSegment> lines     = new ArrayList<LineSegment>();
-      Point[] pointsCopy = new Point[points.length - 1];
+      Point[] ptsCopy = new Point[pts.length - 1];
       
-      Arrays.sort(points);
+      Arrays.sort(pts);
       
-      for (int i = 0; i < points.length; i++) {
+      for (int i = 0; i < pts.length; i++) {
          int j = 0, k = 0;
-         while (j < points.length - 1) {
+         while (j < pts.length - 1) {
             if (i != k) {
-               pointsCopy[j] = points[k];
+               ptsCopy[j] = pts[k];
                j++;
             }
             k++;
          }
          
-         Arrays.sort(pointsCopy, points[i].slopeOrder());
+         Arrays.sort(ptsCopy, pts[i].slopeOrder());
          
-         for (j = 0; j < pointsCopy.length; j++) {
+         for (j = 0; j < ptsCopy.length; j++) {
+            double slopeToJ = pts[i].slopeTo(ptsCopy[j]);
             int count = 0;
             k = j;
             
-            double slopeToJ = points[i].slopeTo(pointsCopy[j]);
+            if (slopeToJ == Double.NEGATIVE_INFINITY)
+               throw new IllegalArgumentException();
             
-            while (k < pointsCopy.length &&
-                   points[i].compareTo(pointsCopy[k]) <= 0 &&
-                   slopeToJ == points[i].slopeTo(pointsCopy[k])) {
+            while (k < ptsCopy.length &&
+                   pts[i].compareTo(ptsCopy[k]) <= 0 &&
+                   slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
                
                count++;
 //               StdOut.println("Count: " + count);
-//               StdOut.println("Compare: " + points[i].compareTo(pointsCopy[k]));
+//               StdOut.println("Compare: " + pts[i].compareTo(ptsCopy[k]));
 //               StdOut.println("");
                k++;
             }
             
             if (count >= 3) {
-//               StdOut.println(points[i].toString());
+//               StdOut.println(pts[i].toString());
 //               for (int x = 0; x < count; x++) {
-//                  StdOut.println(pointsCopy[j + x].toString());
+//                  StdOut.println(ptsCopy[j + x].toString());
 //               }
 //               StdOut.println("");
                
-               Point endpoint = pointsCopy[k - 1];
+               Point endpoint = ptsCopy[k - 1];
                boolean isDuplicate = false;
                
                for (int x = 0; x < endpoints.size(); x++) {
                   if (endpoints.get(x) == endpoint && slopes.get(x) == slopeToJ) {
                      isDuplicate = true;
+                     break;
                   }
                }
                
                if (!isDuplicate) {
-                  lines.add(new LineSegment(points[i], pointsCopy[k - 1]));
+                  lines.add(new LineSegment(pts[i], ptsCopy[k - 1]));
                   endpoints.add(endpoint);
                   slopes.add(slopeToJ);
                }
@@ -102,7 +87,7 @@ public class FastCollinearPoints {
    
    // the line segments
    public LineSegment[] segments() {
-      return lineSegments;
+      return lineSegments.clone();
    }
    
    // test client
@@ -129,7 +114,7 @@ public class FastCollinearPoints {
       // print and draw the line segments
       FastCollinearPoints collinear = new FastCollinearPoints(points);
       for (LineSegment segment : collinear.segments()) {
-          StdOut.println(segment);
+//          StdOut.println(segment);
           segment.draw();
       }
       StdDraw.show();

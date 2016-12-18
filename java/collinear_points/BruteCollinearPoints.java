@@ -1,46 +1,49 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class BruteCollinearPoints {
-   private final LineSegment[] lineSegments;
+   private final Point[]       pts;           // copy of input array
+   private final LineSegment[] lineSegments;  // set of lines to be drawn
    
    // finds all line segments containing 4 points
    public BruteCollinearPoints(Point[] points) {
       if (points == null) throw new NullPointerException();
       
+      pts = points.clone();
       ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
       
-      Arrays.sort(points);
+      Arrays.sort(pts);
       
-      for (int i = 0; i < points.length; i++) {
-         if (points[i] == null) throw new NullPointerException();
+      for (int i = 0; i < pts.length; i++) {
+         if (pts[i] == null) throw new NullPointerException();
          
-         for (int j = i + 1; j < points.length; j++) {
-            if (points[j] == null)
+         for (int j = i + 1; j < pts.length; j++) {
+            if (pts[j] == null)
                throw new NullPointerException();
             
-            if (points[i].slopeTo(points[j]) == Double.NEGATIVE_INFINITY)
+            if (pts[i].slopeTo(pts[j]) == Double.NEGATIVE_INFINITY)
                throw new IllegalArgumentException();
             
-            for (int k = j + 1; k < points.length; k++) {
-               if (points[k] == null) throw new NullPointerException();
+            for (int k = j + 1; k < pts.length; k++) {
+               if (pts[k] == null) throw new NullPointerException();
                
-               for (int l = k + 1; l < points.length; l++) {
-                  if (points[l] == null) throw new NullPointerException();
+               for (int l = k + 1; l < pts.length; l++) {
+                  if (pts[l] == null) throw new NullPointerException();
                   
-                  Double slope1 = points[i].slopeTo(points[j]);
-                  Double slope2 = points[i].slopeTo(points[k]);
-                  Double slope3 = points[i].slopeTo(points[l]);
+                  double slope1 = pts[i].slopeTo(pts[j]);
+                  double slope2 = pts[i].slopeTo(pts[k]);
+                  double slope3 = pts[i].slopeTo(pts[l]);
                   
-                  if (slope1.equals(slope2) && slope1.equals(slope3)) {            
-//                     StdOut.println(points[i].toString());
-//                     StdOut.println(points[j].toString());
-//                     StdOut.println(points[k].toString());
-//                     StdOut.println(points[l].toString());
+                  if (slope1 == slope2 && slope1 == slope3) {            
+//                     StdOut.println(pts[i].toString());
+//                     StdOut.println(pts[j].toString());
+//                     StdOut.println(pts[k].toString());
+//                     StdOut.println(pts[l].toString());
 //                     StdOut.println("");
-                     lines.add(new LineSegment(points[i], points[l]));
+                     lines.add(new LineSegment(pts[i], pts[l]));
                   }
                }
             }
@@ -57,7 +60,7 @@ public class BruteCollinearPoints {
    
    // the line segments
    public LineSegment[] segments() {
-      return lineSegments;
+      return lineSegments.clone();
    }
    
    // test client
