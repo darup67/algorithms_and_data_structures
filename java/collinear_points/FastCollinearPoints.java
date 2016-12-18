@@ -13,6 +13,8 @@ public class FastCollinearPoints {
       ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
       Point[] pointsCopy = new Point[points.length - 1];
       
+      Arrays.sort(points);
+      
       for (int i = 0; i < points.length; i++) {
          int j = 0, k = 0;
          while (j < points.length - 1) {
@@ -25,13 +27,26 @@ public class FastCollinearPoints {
          
          Arrays.sort(pointsCopy, points[i].slopeOrder());
          
-         for (j = 0; j < pointsCopy.length - 2; j++) {
-            if (points[i].slopeTo(pointsCopy[j]) == points[i].slopeTo(pointsCopy[j + 1]) &&
-                points[i].slopeTo(pointsCopy[j]) == points[i].slopeTo(pointsCopy[j + 2])) {
+         for (j = 0; j < pointsCopy.length; j++) {
+            int count = 0;
+            k = j + 1;
             
-               Point[] linePoints = {points[i], pointsCopy[j], pointsCopy[j+1], pointsCopy[j+2]};
-               Arrays.sort(linePoints);
-               lines.add(new LineSegment(linePoints[0], linePoints[3]));
+            double slopeToJ = points[i].slopeTo(pointsCopy[j]);
+            
+            while (k < pointsCopy.length &&
+                   slopeToJ == points[i].slopeTo(pointsCopy[k])) {
+               
+               count++;
+               k++;
+            }
+            
+            if (count >= 2) {
+               StdOut.println(points[i].toString());
+               for (int x = 0; x <= count; x++) {
+                  StdOut.println(pointsCopy[j + x].toString());
+               }
+               StdOut.println("");
+               lines.add(new LineSegment(points[i], pointsCopy[k - 1]));
             }
          }
       }

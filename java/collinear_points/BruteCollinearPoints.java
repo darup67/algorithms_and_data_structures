@@ -11,14 +11,18 @@ public class BruteCollinearPoints {
       if (points == null) throw new NullPointerException();
       
       ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
-      Point[] linePoints = new Point[4];
+      
+      Arrays.sort(points);
       
       for (int i = 0; i < points.length; i++) {
          if (points[i] == null) throw new NullPointerException();
          
          for (int j = i + 1; j < points.length; j++) {
-            if (points[j] == null)      throw new NullPointerException();
-            if (points[i] == points[j]) throw new IllegalArgumentException();
+            if (points[j] == null)
+               throw new NullPointerException();
+            
+            if (points[i].slopeTo(points[j]) == Double.NEGATIVE_INFINITY)
+               throw new IllegalArgumentException();
             
             for (int k = j + 1; k < points.length; k++) {
                if (points[k] == null) throw new NullPointerException();
@@ -30,19 +34,13 @@ public class BruteCollinearPoints {
                   Double slope2 = points[i].slopeTo(points[k]);
                   Double slope3 = points[i].slopeTo(points[l]);
                   
-                  if (slope1.equals(slope2) && slope1.equals(slope3)) {
-//                     StdOut.println(slope1 + ", " + slope2 + ", " + slope3);
+                  if (slope1.equals(slope2) && slope1.equals(slope3)) {            
+//                     StdOut.println(points[i].toString());
+//                     StdOut.println(points[j].toString());
+//                     StdOut.println(points[k].toString());
+//                     StdOut.println(points[l].toString());
 //                     StdOut.println("");
-                     
-                     linePoints[0] = points[i];
-                     linePoints[1] = points[j];
-                     linePoints[2] = points[k];
-                     linePoints[3] = points[l];
-                     Arrays.sort(linePoints);
-//                     for (Point p : ptArr) StdOut.println(p.toString());
-//                     StdOut.println("");
-                     
-                     lines.add(new LineSegment(linePoints[0], linePoints[3]));
+                     lines.add(new LineSegment(points[i], points[l]));
                   }
                }
             }
