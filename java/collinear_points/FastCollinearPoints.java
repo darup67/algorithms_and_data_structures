@@ -31,63 +31,45 @@ public class FastCollinearPoints {
          
          Arrays.sort(ptsCopy, pts[i].slopeOrder());
          
-         for (j = 0; j < ptsCopy.length - 1; ) {  // No ++ here, see end of loop
-            double slopeToJ = pts[i].slopeTo(ptsCopy[j]);
-            int count = 1;
-            
-            if (slopeToJ == Double.NEGATIVE_INFINITY)
+         if (pts[i].slopeTo(ptsCopy[0]) == Double.NEGATIVE_INFINITY)
+               throw new IllegalArgumentException();
+         
+         for (j = 0; j < ptsCopy.length - 1;) {  // No ++ here, see end of loop
+            if (pts[i].slopeTo(ptsCopy[j + 1]) == Double.NEGATIVE_INFINITY)
                throw new IllegalArgumentException();
             
-            // If next element in ptsCopy is in order and has same slope
+            final double slopeToJ = pts[i].slopeTo(ptsCopy[j]);
+            int count = 2;
             k = j + 1;
-            if (pts[i].compareTo(ptsCopy[j]) <= 0 &&
-                slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
-//               StdOut.println(pts[i].toString());
-//               StdOut.println(ptsCopy[j].toString());
-//               StdOut.println(ptsCopy[k].toString());
-//               StdOut.println("");
-               
-               // While there are points left, points are in order, same slope
-               while (k < ptsCopy.length &&
+            
+//            StdOut.println(pts[i].toString());
+//            StdOut.println(ptsCopy[j].toString());
+            
+            // While there are points left, points are in order, have same slope
+            while (k < ptsCopy.length &&
                    ptsCopy[j].compareTo(ptsCopy[k]) <= 0 &&
                    slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
-                  count++;
-                  k++;
-               }
+//               StdOut.println(ptsCopy[k].toString());
+               count++;
+               k++;
+            }
+            
+//            StdOut.println(count);
+//            StdOut.println("");
             
             // If there are 4 or more contiguous same-slope points
-               if (count >= 3) {
-//                  StdOut.println("Pre-sort:");
-//                  StdOut.println(pts[i].toString());
-//                  for (int x = 0; x < count; x++) {
-//                     StdOut.println(ptsCopy[j + x].toString());
-//                  }
-                  
-//                  Point[] testPoints = new Point[count + 1];
-//                  int y = 1;
-                  
-//                  testPoints[0] = pts[i];
-//                  for (int x = 0; x < count; x++) {
-//                     testPoints[y] = ptsCopy[j + x];
-//                     y++;
-//                  }
-                  
-//                  Arrays.sort(testPoints);
-                  
-//                  StdOut.println("Post-sort:");
-//                  for (Point p : testPoints) {
-//                     StdOut.println(p.toString());
-//                  }
-//                  StdOut.println("");
-                  
-//                  StdOut.println("New line!");
-//                  StdOut.println("");
-                  lines.add(new LineSegment(pts[i], ptsCopy[k - 1]));
-                  
-//                  testPoints = null;
-               }
+            // and pts[i] is the first point in natural order
+            // (k - 1 is the last valid index of the while loop)
+            if (count >= 4 && pts[i].compareTo(ptsCopy[j]) <= 0) {
+//               StdOut.println("New line!");
+//               StdOut.println("");
+//               StdOut.println("");
+               
+               lines.add(new LineSegment(pts[i], ptsCopy[k - 1]));
             }
+            
             // Jump past this set of contiguous same-slope points to next point
+            // Serves as loop incrementer
             j = k;
          }
       }
