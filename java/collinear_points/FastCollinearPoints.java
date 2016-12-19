@@ -31,9 +31,12 @@ public class FastCollinearPoints {
          
          Arrays.sort(ptsCopy, pts[i].slopeOrder());
          
-         if (pts[i].slopeTo(ptsCopy[0]) == Double.NEGATIVE_INFINITY)
-               throw new IllegalArgumentException();
-         
+         if (ptsCopy.length > 0 &&
+             pts[i].slopeTo(ptsCopy[0]) == Double.NEGATIVE_INFINITY) {
+            throw new IllegalArgumentException();
+         }
+
+         // Iteration of all ptsCopy items to length - 1 so k is valid
          for (j = 0; j < ptsCopy.length - 1;) {  // No ++ here, see end of loop
             if (pts[i].slopeTo(ptsCopy[j + 1]) == Double.NEGATIVE_INFINITY)
                throw new IllegalArgumentException();
@@ -42,29 +45,18 @@ public class FastCollinearPoints {
             int count = 2;
             k = j + 1;
             
-//            StdOut.println(pts[i].toString());
-//            StdOut.println(ptsCopy[j].toString());
-            
             // While there are points left, points are in order, have same slope
             while (k < ptsCopy.length &&
                    ptsCopy[j].compareTo(ptsCopy[k]) <= 0 &&
                    slopeToJ == pts[i].slopeTo(ptsCopy[k])) {
-//               StdOut.println(ptsCopy[k].toString());
                count++;
                k++;
             }
-            
-//            StdOut.println(count);
-//            StdOut.println("");
             
             // If there are 4 or more contiguous same-slope points
             // and pts[i] is the first point in natural order
             // (k - 1 is the last valid index of the while loop)
             if (count >= 4 && pts[i].compareTo(ptsCopy[j]) <= 0) {
-//               StdOut.println("New line!");
-//               StdOut.println("");
-//               StdOut.println("");
-               
                lines.add(new LineSegment(pts[i], ptsCopy[k - 1]));
             }
             
