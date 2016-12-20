@@ -6,6 +6,20 @@ public class Board {
    
    private final int[][] blocks;  // game board
    private final int n;           // board dimensons (n x n)
+   
+   // swap two array positions and return result
+   private int[][] swap(int x1, int y1, int x2, int y2) {
+      final int[][] array = new int[n][n];
+      for (int i = 0; i < n; i++)
+         for (int j = 0; j < n; j++)
+            array[i][j] = blocks[i][j];
+      
+      final int temp = array[x1][y1];
+      array[x1][y1] = array[x2][y2];
+      array[x2][y2] = temp;
+      
+      return array;
+   }
 
    // construct a board from an n-by-n array of blocks
    // (where blocks[i][j] = block in row i, column j)
@@ -45,6 +59,7 @@ public class Board {
       for (int i = 0; i < blocks.length; i++) {
          for (int j = 0; j < blocks[i].length; j++) {
             if (blocks[i][j] != 0) {
+               
                final int expected = (i * n) + j + 1;
                final int actual   = blocks[i][j];
                
@@ -61,17 +76,7 @@ public class Board {
                final int actRow = isActModZero ? (actual   / n) - 1 : actual   / n;
                final int rows = Math.abs(expRow - actRow);
                
-//               StdOut.println("Expected: " + expected);
-//               StdOut.println("Actual: " + blocks[i][j]);
-//               StdOut.println("Cols: " + cols);
-//               StdOut.println("Rows: " + rows);
-//               StdOut.println("Total: " + (cols + rows));
-//               StdOut.println("");
-               
                count += cols + rows;
-               
-//               StdOut.println("Count: " + count);
-//               StdOut.println("");
             }
          }
       }
@@ -86,31 +91,22 @@ public class Board {
    
    // a board that is obtained by exchanging any pair of blocks
    public Board twin() {
-      int[][] twinBlocks = blocks.clone();
-      
       // pick two non-zero array elements
       int i = 0, j = 0, k = -1, l = -1;
       
-      for (; i < n; i++) {
-         for (; j < n; j++) {
+      for (i = 0; i < n; i++) {
+         for (j = 0; j < n; j++) {
             if (k == -1 && blocks[i][j] != 0) {
                k = i;
                l = j;
-            
-            } else if (blocks[i][j] != 0) break;           
+               
+            } else if (blocks[i][j] != 0) break;
          }
-         if (k != -1 && blocks[i][j] != 0) break;
-         else StdOut.println("i: " + i + "  j: " + j);
+         if (j < n && k != -1 && blocks[i][j] != 0) break;
       }
       
-      // swap procedure
-      StdOut.println("i: " + i + "  j: " + j);
-      StdOut.println("k: " + k + "  l: " + l);
-      final int temp = twinBlocks[i][j];
-      twinBlocks[i][j] = twinBlocks[k][l];
-      twinBlocks[k][l] = temp;
-      
-      return new Board(twinBlocks);
+      // swap elements and create new Board from the new array
+      return new Board(swap(i, j, k, l));
    }
    
    // does this board equal y?
@@ -122,7 +118,7 @@ public class Board {
       if (y.getClass() != this.getClass()) return false;
       
       Board that = (Board) y;
-      if (this.n     != that.n)     return false;
+      if (this.n != that.n) return false;
       for (int i = 0; i < n; i++)
          for (int j = 0; i < n; j++)
             if (this.blocks[i][j] != that.blocks[i][j]) return false;
@@ -130,34 +126,66 @@ public class Board {
    }
    
    // all neighboring boards
-//   public Iterable<Board> neighbors() {
-//      
-//   }
+   public Iterable<Board> neighbors() {
+      Stack<Board> stack = new Stack<Board>();
+      
+      // find empty node
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            if (blocks[i][j] == 0) {
+               
+               // swap N node and push result to stack, if exists
+               if (i - 1 >= 0) {
+                  stack.push(new Board(swap(i - 1, j, i, j)));
+               }
+               
+               // swap S node and push result to stack, if exists
+               if (i + 1 < n) {
+                  stack.push(new Board(swap(i + 1, j, i, j)));
+               }
+               
+               // swap W node and push result to stack, if exists
+               if (j - 1 >= 0) {
+                  stack.push(new Board(swap(i, j - 1, i, j)));
+               }
+               
+               // swap E node and push result to stack, if exists
+               if (j + 1 < n) {
+                  stack.push(new Board(swap(i, j + 1, i, j)));
+               }
+               
+               break;
+            }
+         }
+         
+         if (!stack.empty()) break;
+      }
+      
+      return stack;
+   }
    
    // string representation of this board
    public String toString() {
-      String boardStr = "\n" + n + "\n ";
+      StringBuilder s = new StringBuilder();
       
-      for (int i = 0; i < blocks.length; i++) {
-         for (int j = 0; j < blocks[i].length; j++) {
-            boardStr += blocks[i][j] + "  ";
+      s.append(n + "\n");
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            s.append(String.format("%2d ", blocks[i][j]));
          }
-         
-         boardStr += "\n ";
+         s.append("\n");
       }
       
-      return boardStr;
+      return s.toString();
    }
 
    // unit tests (not graded)
    public static void main(String[] args) {
       
-      final int[][] array = {{0, 1, 3}, {4, 8, 2}, {7, 6, 5}};
-      Board board = new Board(array);
-//      StdOut.println(board.toString());
-//      StdOut.println(board.hamming());
+      final int[][] array = {{1, 5, 3}, {4, 8, 2}, {7, 6, 0}};
+      Board board = new Board(array)
       StdOut.println(board.toString());
-      StdOut.println(board.twin().toString());
+      for (Board b : board.neighbors()) StdOut.println(b.toString());
       
 //      // create initial board from file
 //      In in = new In(args[0]);
