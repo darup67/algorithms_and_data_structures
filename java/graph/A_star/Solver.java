@@ -5,32 +5,66 @@ import edu.princeton.cs.algs4.In;
 
 public class Solver {
    
-   private final Board initial;                                         // starting position
-   private MinPQ<Board> pq = new MinPQ<Board>(new Solver.BoardOrder()); // A* priority queue
-   private int moves = 0;                                               // number of moves made
+   private Node head;                           // solved node
+   private MinPQ<Node> pq = new MinPQ<Node>();  // A* priority queue
+   private int solutionMoves;                   // number of moves in solution
    
    // compares two boards by Manhattan priority function
-   private static class BoardOrder implements Comparator<Board> {
+   private class Node implements Comparable<Node> {
        
-       // compare method demanded by Comparator interface
-       public int compare(Board b1, Board b2) {
-          if (b1.manhattan() > b2.manhattan()) return 1;
-          else if (b1.manhattan() < b2.manhattan()) return -1;
-          else return 0;
-       }
-    }
+      private final Board board;   // board for this node
+      private final Node prev;     // pointer to previous node
+      private final int moves;     // number of moves taken
+      private final int priority;  // computed priority
+      
+      // Node constructor
+      public Node (Board board, Node prev, int moves) {
+         this.board    = board;
+         this.prev     = prev;
+         this.moves    = moves;
+         this.priority = board.manhattan() + moves;
+      }
+      
+      public int compareTo(Node that) {
+         if      (this.priority > that.priority) return 1;
+         else if (this.priority < that.priority) return -1;
+         else return 0;
+      }
+   }
    
    // find a solution to the initial board (using the A* algorithm)
    public Solver(Board initial) {
       if (initial == null) throw new NullPointerException();
 
-      boolean solved = false;
-      this.initial = initial;
+      pq.insert(new Node(initial, null, 0));
       
-      pq.insert(initial);
-      
-      while (!solved) {
-         pq.insert(
+      while (true) {
+         final Node node = pq.delMin();
+         if (node.board.isGoal()) {
+            head = node;
+            solutionMoves = head.moves;
+            break;
+         }
+         
+         assert node.priority >= node.prev.priority;
+         
+         for (Board neighbor : node.board.neighbors()) {
+            if (node.prev == null)
+               pq.insert(new Node(neighbor, node, 1));
+            
+            else if (!neighbor.equals(node.prev.board))
+               pq.insert(new Node(neighbor, node, node.moves + 1));
+         }
+         
+//         StdOut.println("================");
+//         StdOut.println("Moves: " + moves);
+//         StdOut.println("================");
+//         for (Node solNode : pq) {
+//            StdOut.println("Priority: " + solNode.priority());
+//            StdOut.println("Manhattan: " + solNode.board().manhattan());
+//            StdOut.println(solNode.board().toString());
+//         }
+//         StdOut.println();
       }
    }
    
@@ -41,20 +75,20 @@ public class Solver {
    
    // min number of moves to solve initial board; -1 if unsolvable
    public int moves() {
-      return initial.manhattan();
+      return solutionMoves;
    }
    
    // sequence of boards in a shortest solution; null if unsolvable
    public Iterable<Board> solution() {
-      ArrayList<Board> boardList = new ArrayList<Board>();
+      ArrayDeque<Board> solution = new ArrayDeque<Board>();
       
-      while (true) {
-         final Board newBoard = pq.delMin();
-         boardList.add(newBoard);
-         if (newBoard.isGoal()) break;
+      Node node = head;
+      while (node != null) {
+         solution.addFirst(node.board);
+         node = node.prev;
       }
       
-      return boardList;
+      return solution;
    }
    
    // solve a slider puzzle (given below)
@@ -65,8 +99,10 @@ public class Solver {
       int[][] blocks = new int[n][n];
       for (int i = 0; i < n; i++)
          for (int j = 0; j < n; j++)
-         blocks[i][j] = in.readInt();
+            blocks[i][j] = in.readInt();
       Board initial = new Board(blocks);
+      StdOut.println("Hamming: " + initial.hamming());
+      StdOut.println("Manhattan: " + initial.manhattan());
       
       // solve the puzzle
       Solver solver = new Solver(initial);

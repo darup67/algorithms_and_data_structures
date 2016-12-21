@@ -5,6 +5,8 @@ public class Board {
    
    private final int[][] blocks;  // game board
    private final int n;           // board dimensons (n x n)
+   private int hamming   = -1;    // computed hamming dist
+   private int manhattan = -1;    // computed manhattan dist
    
    // swap two array positions and return result
    private int[][] swap(int x1, int y1, int x2, int y2) {
@@ -24,10 +26,16 @@ public class Board {
    // (where blocks[i][j] = block in row i, column j)
    public Board(int[][] blocks) {
       if (blocks == null) throw new NullPointerException();
+
+      this.n = blocks.length;
+      this.blocks = new int[n][n];
       
-      this.blocks = blocks.clone();
-      n = blocks.length;
+      for (int i = 0; i < n; i++)
+         for (int j = 0; j < n; j++)
+            this.blocks[i][j] = blocks[i][j];
       
+      this.hamming = this.hamming();
+      this.manhattan = this.manhattan();
    }
    
    // board dimension n
@@ -37,6 +45,8 @@ public class Board {
    
    // number of blocks out of place
    public int hamming() {
+      if (hamming != -1) return hamming;
+      
       int count = 0;
       
       for (int i = 0; i < blocks.length; i++) {
@@ -53,12 +63,13 @@ public class Board {
    
    // sum of Manhattan distances between blocks and goal
    public int manhattan() {
+      if (manhattan != -1) return manhattan;
+      
       int count = 0;
       
       for (int i = 0; i < blocks.length; i++) {
          for (int j = 0; j < blocks[i].length; j++) {
             if (blocks[i][j] != 0) {
-               
                final int expected = (i * n) + j + 1;
                final int actual   = blocks[i][j];
                
@@ -119,7 +130,7 @@ public class Board {
       Board that = (Board) y;
       if (this.n != that.n) return false;
       for (int i = 0; i < n; i++)
-         for (int j = 0; i < n; j++)
+         for (int j = 0; j < n; j++)
             if (this.blocks[i][j] != that.blocks[i][j]) return false;
       return true;
    }
@@ -156,7 +167,6 @@ public class Board {
                break;
             }
          }
-         
          if (!stack.empty()) break;
       }
       
@@ -180,7 +190,6 @@ public class Board {
 
    // unit tests (not graded)
    public static void main(String[] args) {
-      
       final int[][] array = {{1, 5, 3}, {4, 8, 2}, {7, 6, 0}};
       Board board = new Board(array);
       StdOut.println(board.toString());
