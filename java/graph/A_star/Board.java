@@ -1,5 +1,6 @@
 import java.util.Stack;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.In;
 
 public class Board {
    
@@ -7,20 +8,6 @@ public class Board {
    private final int n;           // board dimensons (n x n)
    private int hamming   = -1;    // computed hamming dist
    private int manhattan = -1;    // computed manhattan dist
-   
-   // swap two array positions and return result
-   private int[][] swap(int x1, int y1, int x2, int y2) {
-      final int[][] array = new int[n][n];
-      for (int i = 0; i < n; i++)
-         for (int j = 0; j < n; j++)
-            array[i][j] = blocks[i][j];
-      
-      final int temp = array[x1][y1];
-      array[x1][y1] = array[x2][y2];
-      array[x2][y2] = temp;
-      
-      return array;
-   }
 
    // construct a board from an n-by-n array of blocks
    // (where blocks[i][j] = block in row i, column j)
@@ -36,6 +23,20 @@ public class Board {
       
       this.hamming = this.hamming();
       this.manhattan = this.manhattan();
+   }
+   
+   // swap two array positions and return result
+   private int[][] swap(int x1, int y1, int x2, int y2) {
+      final int[][] array = new int[n][n];
+      for (int i = 0; i < n; i++)
+         for (int j = 0; j < n; j++)
+            array[i][j] = blocks[i][j];
+      
+      final int temp = array[x1][y1];
+      array[x1][y1] = array[x2][y2];
+      array[x2][y2] = temp;
+      
+      return array;
    }
    
    // board dimension n
@@ -78,8 +79,8 @@ public class Board {
                final boolean isExpModZero = expMod == 0;
                final boolean isActModZero = actMod == 0;
                
-               final int expCol = isExpModZero ? 3 : expMod;
-               final int actCol = isActModZero ? 3 : actMod;
+               final int expCol = isExpModZero ? n : expMod;
+               final int actCol = isActModZero ? n : actMod;
                final int cols = Math.abs(expCol - actCol);
                
                final int expRow = isExpModZero ? (expected / n) - 1 : expected / n;
@@ -190,9 +191,17 @@ public class Board {
 
    // unit tests (not graded)
    public static void main(String[] args) {
-      final int[][] array = {{1, 5, 3}, {4, 8, 2}, {7, 6, 0}};
-      Board board = new Board(array);
-      StdOut.println(board.toString());
-      for (Board b : board.neighbors()) StdOut.println(b.toString());
+      // create board from file
+      In in = new In(args[0]);
+      int n = in.readInt();
+      int[][] blocks = new int[n][n];
+      for (int i = 0; i < n; i++)
+         for (int j = 0; j < n; j++)
+            blocks[i][j] = in.readInt();
+      Board board = new Board(blocks);
+      
+//      StdOut.println(board.toString());
+//      for (Board b : board.neighbors()) StdOut.println(b.toString());
+      StdOut.println(board.manhattan());
    }
 }

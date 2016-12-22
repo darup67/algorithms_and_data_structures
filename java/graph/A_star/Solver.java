@@ -19,7 +19,7 @@ public class Solver {
       private final int priority;  // computed priority
       
       // Node constructor
-      public Node (Board board, Node prev, int moves) {
+      public Node(Board board, Node prev, int moves) {
          this.board    = board;
          this.prev     = prev;
          this.moves    = moves;
@@ -45,7 +45,6 @@ public class Solver {
       while (true) {
          // Solution on original board
          final Node node = pq.delMin();
-         assert node.priority >= node.prev.priority;
          
          if (node.board.isGoal()) {
             head = node;
@@ -64,7 +63,6 @@ public class Solver {
          
          // Solution on twin board
          final Node nodeTwin = pqTwin.delMin();
-         assert nodeTwin.priority >= nodeTwin.prev.priority;
          
          if (nodeTwin.board.isGoal()) {
             solutionMoves = -1;
