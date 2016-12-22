@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
