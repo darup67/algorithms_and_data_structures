@@ -8,6 +8,7 @@ public class Solver {
    private Node head;                           // solved node
    private MinPQ<Node> pq = new MinPQ<Node>();  // A* priority queue
    private int solutionMoves;                   // number of moves in solution
+   private boolean isSolvable;                  // is this puzzle solvable?
    
    // compares two boards by Manhattan priority function
    private class Node implements Comparable<Node> {
@@ -35,18 +36,23 @@ public class Solver {
    // find a solution to the initial board (using the A* algorithm)
    public Solver(Board initial) {
       if (initial == null) throw new NullPointerException();
-
+      
+      MinPQ<Node> pqTwin = new MinPQ<Node>();  // Twin board pq
+      
       pq.insert(new Node(initial, null, 0));
+      pqTwin.insert(new Node(initial.twin(), null, 0));
       
       while (true) {
+         // Solution on original board
          final Node node = pq.delMin();
+         assert node.priority >= node.prev.priority;
+         
          if (node.board.isGoal()) {
             head = node;
             solutionMoves = head.moves;
+            isSolvable = true;
             break;
          }
-         
-         assert node.priority >= node.prev.priority;
          
          for (Board neighbor : node.board.neighbors()) {
             if (node.prev == null)
@@ -56,21 +62,29 @@ public class Solver {
                pq.insert(new Node(neighbor, node, node.moves + 1));
          }
          
-//         StdOut.println("================");
-//         StdOut.println("Moves: " + moves);
-//         StdOut.println("================");
-//         for (Node solNode : pq) {
-//            StdOut.println("Priority: " + solNode.priority());
-//            StdOut.println("Manhattan: " + solNode.board().manhattan());
-//            StdOut.println(solNode.board().toString());
-//         }
-//         StdOut.println();
+         // Solution on twin board
+         final Node nodeTwin = pqTwin.delMin();
+         assert nodeTwin.priority >= nodeTwin.prev.priority;
+         
+         if (nodeTwin.board.isGoal()) {
+            solutionMoves = -1;
+            isSolvable = false;
+            break;
+         }
+         
+         for (Board neighbor : nodeTwin.board.neighbors()) {
+            if (nodeTwin.prev == null)
+               pqTwin.insert(new Node(neighbor, nodeTwin, 1));
+            
+            else if (!neighbor.equals(nodeTwin.prev.board))
+               pqTwin.insert(new Node(neighbor, nodeTwin, nodeTwin.moves + 1));
+         }
       }
    }
    
    // is the initial board solvable?
    public boolean isSolvable() {
-      return true;
+      return isSolvable;
    }
    
    // min number of moves to solve initial board; -1 if unsolvable
@@ -80,6 +94,8 @@ public class Solver {
    
    // sequence of boards in a shortest solution; null if unsolvable
    public Iterable<Board> solution() {
+      if (!isSolvable) return null;
+      
       ArrayDeque<Board> solution = new ArrayDeque<Board>();
       
       Node node = head;
@@ -101,8 +117,6 @@ public class Solver {
          for (int j = 0; j < n; j++)
             blocks[i][j] = in.readInt();
       Board initial = new Board(blocks);
-      StdOut.println("Hamming: " + initial.hamming());
-      StdOut.println("Manhattan: " + initial.manhattan());
       
       // solve the puzzle
       Solver solver = new Solver(initial);
