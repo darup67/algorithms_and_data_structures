@@ -1,14 +1,12 @@
-import java.util.ArrayDeque;
+import java.util.Arrays;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 
 public class Solver {
    
-   private Node head;                           // solved node
-   private MinPQ<Node> pq = new MinPQ<Node>();  // A* priority queue
-   private int solutionMoves;                   // number of moves in solution
-   private boolean isSolvable;                  // is this puzzle solvable?
+   private Board[] solution;    // solution
+   private int solutionMoves;   // number of moves in solution
    
    // compares two boards by Manhattan priority function
    private class Node implements Comparable<Node> {
@@ -37,6 +35,7 @@ public class Solver {
    public Solver(Board initial) {
       if (initial == null) throw new NullPointerException();
       
+      MinPQ<Node> pq     = new MinPQ<Node>();  // Original board pq
       MinPQ<Node> pqTwin = new MinPQ<Node>();  // Twin board pq
       
       pq.insert(new Node(initial, null, 0));
@@ -44,12 +43,16 @@ public class Solver {
       
       while (true) {
          // Solution on original board
-         final Node node = pq.delMin();
+         Node node = pq.delMin();
          
          if (node.board.isGoal()) {
-            head = node;
-            solutionMoves = head.moves;
-            isSolvable = true;
+            solutionMoves = node.moves;
+            solution = new Board[node.moves + 1];
+            
+            for (int i = node.moves; i >= 0; i--) {
+               solution[i] = node.board;
+               node = node.prev;
+            }
             break;
          }
          
@@ -66,7 +69,6 @@ public class Solver {
          
          if (nodeTwin.board.isGoal()) {
             solutionMoves = -1;
-            isSolvable = false;
             break;
          }
          
@@ -82,7 +84,7 @@ public class Solver {
    
    // is the initial board solvable?
    public boolean isSolvable() {
-      return isSolvable;
+      return solutionMoves == -1 ? false : true;
    }
    
    // min number of moves to solve initial board; -1 if unsolvable
@@ -92,17 +94,7 @@ public class Solver {
    
    // sequence of boards in a shortest solution; null if unsolvable
    public Iterable<Board> solution() {
-      if (!isSolvable) return null;
-      
-      ArrayDeque<Board> solution = new ArrayDeque<Board>();
-      
-      Node node = head;
-      while (node != null) {
-         solution.addFirst(node.board);
-         node = node.prev;
-      }
-      
-      return solution;
+      return solutionMoves == -1 ? null : Arrays.asList(solution);
    }
    
    // solve a slider puzzle (given below)
