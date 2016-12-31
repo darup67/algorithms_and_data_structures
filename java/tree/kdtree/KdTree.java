@@ -2,13 +2,12 @@ import java.util.ArrayList;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
    private Node root = null;  // root pointer
    private int  n = 0;        // tree size
    
-   private class Node {
+   private static class Node {
       private Point2D p;             // node Point2D
       private RectHV  rect;          // rect of all points possibly under node
       private Node    left  = null;  // left child pointer
@@ -55,7 +54,7 @@ public class KdTree {
          } else {
             if (node.right == null) {
 //               StdOut.println("Insert right (X)");
-               node.right =              new Node(p,node.p.x(), ymin, xmax, ymax);
+               node.right =            new Node(p, node.p.x(), ymin, xmax, ymax);
                n++;
                
             } else {
@@ -80,7 +79,7 @@ public class KdTree {
          } else {
             if (node.right == null) {
 //               StdOut.println("Insert right (Y)");
-               node.right =             new Node(p, xmin, node.p.y(), xmax, ymax);
+               node.right =            new Node(p, xmin, node.p.y(), xmax, ymax);
                n++;
             
             } else {
