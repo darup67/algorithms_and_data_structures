@@ -10,11 +10,13 @@ public class KdTree {
    
    private class Node {
       private Point2D p;             // node Point2D
+      private RectHV  rect;          // rect of all points possibly under node
       private Node    left  = null;  // left child pointer
       private Node    right = null;  // right child pointer
       
-      public Node(Point2D p) {
-         this.p = p;
+      public Node(Point2D p, double xmin, double ymin, double xmax, double ymax) {
+         this.p    = p;
+         this.rect = new RectHV(xmin, ymin, xmax, ymax);
       }
    }
    
@@ -24,28 +26,28 @@ public class KdTree {
    }
    
    // internal recursive search method for public insert() method
-   private void createNode(Node node, Point2D p, int level) {
+   private void createNode(Node node, Point2D p, int level, double xmin, double ymin, double xmax, double ymax) {
       
       // level is even (compare x coordinate)
       if (level % 2 == 0) {
          if (p.x() < node.p.x()) {
             if (node.left == null) {
 //               StdOut.println("Insert left (X)");
-               node.left = new Node(p);
+               node.left =             new Node(p, xmin, ymin, node.p.x(), ymax);
                
             } else {
 //               StdOut.println("Traverse left (X)");
-               createNode(node.left, p, level + 1);
+               createNode(node.left, p, level + 1, xmin, ymin, node.p.x(), ymax);
             }
          
          } else {
             if (node.right == null) {
 //               StdOut.println("Insert right (X)");
-               node.right = new Node(p);
+               node.right =              new Node(p,node.p.x(), ymin, xmax, ymax);
                
             } else {
 //               StdOut.println("Traverse right (X)");
-               createNode(node.right, p, level + 1);
+               createNode(node.right, p, level + 1, node.p.x(), ymin, xmax, ymax);
             }
          }
       
@@ -54,21 +56,21 @@ public class KdTree {
          if (p.y() < node.p.y()) {
             if (node.left == null) {
 //               StdOut.println("Insert left (Y)");
-               node.left = new Node(p);
+               node.left =             new Node(p, xmin, ymin, xmax, node.p.y());
             
             } else {
 //               StdOut.println("Traverse left (Y)");
-               createNode(node.left, p, level + 1);
+               createNode(node.left, p, level + 1, xmin, ymin, xmax, node.p.y());
             }
          
          } else {
             if (node.right == null) {
 //               StdOut.println("Insert right (Y)");
-               node.right = new Node(p);
+               node.right =             new Node(p, xmin, node.p.y(), xmax, ymax);
             
             } else {
 //               StdOut.println("Traverse right (Y)");
-               createNode(node.right, p, level + 1);
+               createNode(node.right, p, level + 1, xmin, node.p.y(), xmax, ymax);
             }
          }
       }
@@ -76,26 +78,18 @@ public class KdTree {
    
    // internal recursive search method for public contains() method
    private boolean isInTree(Node node, Point2D p, int level) {
-      if (node == null) return false;
+      if (node == null)     return false;
       if (p.equals(node.p)) return true;
       
       // level is even (compare x coordinate)
       if (level % 2 == 0) {
-         if (p.x() < node.p.x()) {
-            return isInTree(node.left, p, level + 1);
-         
-         } else {
-            return isInTree(node.right, p, level + 1);
-         }
+         if (p.x() < node.p.x()) return isInTree(node.left,  p, level + 1);
+         else                    return isInTree(node.right, p, level + 1);
       
       // level is odd (compare y coordinate)
       } else {
-         if (p.y() < node.p.y()) {
-            return isInTree(node.left, p, level + 1);
-         
-         } else {
-            return isInTree(node.right, p, level + 1);
-         }
+         if (p.y() < node.p.y()) return isInTree(node.left,  p, level + 1);
+         else                    return isInTree(node.right, p, level + 1);
       }
    }
    
@@ -103,10 +97,13 @@ public class KdTree {
    private void drawNode(Node node, int level, double xmin, double ymin, double xmax, double ymax) {
       if (node == null) return;
       
-//      StdOut.println("Point: " + node.p.x() + ", " + node.p.y());
-//      StdOut.println("X: " + xmin + " to " + xmax + ", Y: " + ymin + " to " + ymax);
-//      StdOut.println("Level: " + level);
-//      StdOut.println();
+      StdOut.println("Point: " + node.p.x() + ", " + node.p.y());
+      StdOut.println("X: "    + xmin             + " to " + xmax
+         + ", Y: " + ymin             + " to " + ymax);
+      StdOut.println("Rect: " + node.rect.xmin() + " to " + node.rect.xmax()
+         + ", Y: " + node.rect.ymin() + " to " + node.rect.ymax());
+      StdOut.println("Level: " + level);
+      StdOut.println();
       
       // level is even (vertical line)
       if (level % 2 == 0) {
@@ -151,10 +148,10 @@ public class KdTree {
       if (p == null) throw new NullPointerException();
       
       if (root == null) {
-         root = new Node(p);
+         root = new Node(p, 0, 0, 1, 1);
 //         StdOut.println("Insert root");
       }
-      else createNode(root, p, 0);
+      else createNode(root, p, 0, 0, 0, 1, 1);
       
       n++;
       
@@ -216,9 +213,9 @@ public class KdTree {
       kdtree.insert(new Point2D(0.4, 0.7));
       kdtree.insert(new Point2D(0.9, 0.6));
       
-      StdOut.println(kdtree.contains(new Point2D(0.7, 0.2)));
-      StdOut.println(kdtree.contains(new Point2D(0.4, 0.7)));
-      StdOut.println(kdtree.contains(new Point2D(0.4, 0.8)));
+//      StdOut.println(kdtree.contains(new Point2D(0.7, 0.2)));
+//      StdOut.println(kdtree.contains(new Point2D(0.4, 0.7)));
+//      StdOut.println(kdtree.contains(new Point2D(0.4, 0.8)));
       
       StdDraw.enableDoubleBuffering();
       StdDraw.clear();
