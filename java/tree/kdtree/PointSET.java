@@ -2,7 +2,6 @@ import java.util.TreeSet;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-import edu.princeton.cs.algs4.StdDraw;
 
 public class PointSET {
    private TreeSet<Point2D> points;
@@ -34,9 +33,7 @@ public class PointSET {
    
    // draw all points to standard draw
    public void draw() {
-      for (Point2D p : points) {
-         StdDraw.point(p.x(), p.y());
-      }
+      for (Point2D p : points) p.draw();
    }
    
    // all points that are inside the rectangle 
