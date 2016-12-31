@@ -237,7 +237,7 @@ public class KdTree {
       
       if (isEmpty()) return null;
       
-      Point2D[] nearest = { root.p };
+      Point2D[] nearest = { root.p };  // array allows same reference across recursive calls
       getNearest(root, p, nearest, 0);
       return nearest[0];
    }
