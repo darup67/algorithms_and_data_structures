@@ -31,6 +31,20 @@ function weightedSumByDiff (arr) {
   return sum;
 }
 
+function weightedSumByRatio (arr) {
+  let compT = 0,
+      sum   = 0;
+
+  arr.sort((a,b) => {
+    const ratioDiff = (b.weight / b.length) - (a.weight / a.length);
+    return ratioDiff === 0 ? b.weight - a.weight : ratioDiff;
+  }).forEach(elem => {
+    compT += elem.length;
+    sum   += elem.weight * compT;
+  });
+
+  return sum;
+}
 
 
 fs.readFile('jobs.txt', 'utf8', (err, data) => {
@@ -42,5 +56,6 @@ fs.readFile('jobs.txt', 'utf8', (err, data) => {
     };
   });
 
-  console.log(weightedSum(lines));
+  console.log(weightedSumByDiff(lines));
+  console.log(weightedSumByRatio(lines));
 })
