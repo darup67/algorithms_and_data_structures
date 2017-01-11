@@ -1,7 +1,5 @@
 # Computer Science: Algorithms and Data Structures
-> Implementation of common (and uncommon!) algorithms and data structures in various languages, for my own edification and coding practice
-
-This repo contains all my computer science studies, prep, and general algorithmic experiments.  It combines two previous repos, js_algorithms and js_data_structures.  Seeing as how many algorithms need the data structures to function anyway, it made sense to combine them, and add my work in other languages at the same time.
+> Implementation of various algorithms and data structures in various languages, for my own edification and coding practice
 
 ### Javascript Library
 - **Sorting**
@@ -15,16 +13,18 @@ This repo contains all my computer science studies, prep, and general algorithmi
  - DFS, recursive
  - DFS, iterative
  - Topological sort
- - SCC (strongly connected components)
+ - Strongly connected components (Kosaraju)
+- **Greedy**
+ - Scheduling by priority
 
 ###### \* On random integers (n > 1M), outperforms Javascript library sort()
 
 - **Linked lists**
- - Singly, optimized
+ - Singly
  - Doubly
-- **Heap**
-- **Binary search trees**
- - AVL (coming soon)
+- **Heap/Priority Queue**
+- **Hash Tables**
+ - 2SUM problem (ES6 Sets)
 
 
 ### Python Library
@@ -35,18 +35,24 @@ This repo contains all my computer science studies, prep, and general algorithmi
  - Counting inversions
 - **Graph**
  - Shortest paths (Dijkstra)
-- **Heap**
+ - Min-cut (Karger)
+ - Minimum spanning tree (Prim)
+ - Max k-clustering (Kruskal)
+- **Heap/Priority Queue**
  - Median maintenance
 
 
 ### Java Library
 - **Graph**
- - Percolation (see https://en.wikipedia.org/wiki/Percolation_theory)
+ - 8-puzzle (A\*)
+ - Clustering, implicit graph
 - **Deque** (combined stack/queue via doubly linked list)
+- **kd-tree**
 - **Union-find**
  - Quick-find
  - Quick-union
  - Weighted quick-union with path compression (O(log\* n))
+ - Percolation (see https://en.wikipedia.org/wiki/Percolation_theory)
 
 
 ### Primary Sources
@@ -62,7 +68,7 @@ This repo contains all my computer science studies, prep, and general algorithmi
 - **Princeton's algorithms course on Coursera**
  - (+) Good mix of algorithms and data structures
  - (+) Practical: shorter videos, more questions, concise examples
- - (-) Less emphasis on understanding
+ - (-) Less emphasis on proofs
 
 
 ### Languages
@@ -70,8 +76,6 @@ Most examples will be in one of the following:
 - **Javascript/ES6 (Node.js)**
 - **Python 3**
 - **Java**
-
-My "official" training is in web development, so most examples will be in JS due to time constraints.  In my opinion, the biggest challenge of working with many languages is understanding various compiler/interpreter error messages.  Haskell's interpreter seems to give cryptic error messages at first, but after a week or so of practice, I'd take it any day over the C++ compiler for Visual Studio (ask me again in a few months and maybe you'll get a different answer).
 
 
 ### Quality / Reuse
