@@ -6,13 +6,10 @@ Array.prototype.swap = function swap (a, b) {
 	this[b] = temp;
 };
 
-function selection_sort (arr) {
+function insertion_sort (arr) {
   for (let i = 0; i < arr.length; i++) {
-    let min = i;
-    for (let j = i + 1; j < arr.length; j++) {
-      if (arr[j] < arr[min]) min = j;
-    }
-    arr.swap(i, min);
+    let j = i;
+    while (j > 0 && arr[j-1] > arr[j]) arr.swap(j, --j);
   }
 }
 
@@ -20,5 +17,5 @@ let testArr = [];
 for (let i = 0; i < 100; i++) {
   testArr.push(Math.floor(Math.random() * 1000));
 }
-selection_sort(testArr);
+insertion_sort(testArr);
 console.log(testArr);
