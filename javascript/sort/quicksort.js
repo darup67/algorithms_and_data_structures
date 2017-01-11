@@ -56,12 +56,12 @@ function quicksort (arr, compare, lo=0, hi=arr.length-1) {
 	}
 }
 
-// Sorts the partition {arr[lo] ... arr[hi]} and returns the final index of the pivot value
+// Places the pivot (arr[hi]) at its correct position in the partition {arr[lo] ... arr[hi]} and returns the final index of the pivot value
 function partition (arr, compare=(a,b) => a-b, lo, hi) {
 	const pivot = hi;
-	let swapPoint = lo;  // Swap-to index, starts at first index after pivot
+	let swapPoint = lo;  // Swap-to index, starts at lo index
 
-	// Iterate from pivot - 1 to end of partition
+	// Iterate from lo to hi
 	for (let i = swapPoint; i < pivot; i++) {
 		// If the current index value is less/more than the pivot value
 		if (compare(arr[pivot], arr[i]) > 0) {  // if (arr[i] < arr[pivot])
