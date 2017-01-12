@@ -47,7 +47,7 @@ function weightedSumByRatio (arr) {
 }
 
 
-fs.readFile('jobs.txt', 'utf8', (err, data) => {
+fs.readFile('data/jobs.txt', 'utf8', (err, data) => {
   const lines = data.split('\n').slice(1,-1).map(a => {
     const line = a.split(' ');
     return {

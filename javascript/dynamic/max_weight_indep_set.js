@@ -3,35 +3,43 @@
 const fs = require('fs');
 const testArr = [1, 2, 3, 4, 5];
 
-function huffmanMinMax (arr) {
-  const numChars = arr.length;
-  let nodes       = arr.sort((a,b) => b-a).map(e => { return { weight: e, parent: null } }),
-      minPriority = nodes[arr.length - 1],
-      maxPriority = nodes[0];
+function mwis (arr) {
+  const memo     = [0, arr[0]],
+        solution = [];
+  let i;
 
-  function countDepth (node, count=0) {
-    if (node.parent !== null) return countDepth(node.parent, count + 1);
-    return count;
+  for (i = 1; i < arr.length; i++) {
+    memo.push(Math.max(memo[i], memo[i - 1] + arr[i]));
   }
 
-  for (let i = 1; i < numChars; i++) {
-    const left    = nodes.pop(),
-          right   = nodes[nodes.length - 1],
-          newNode = { weight: left.weight + right.weight, parent: null };
+  // console.log(memo);
 
-    left.parent = right.parent = newNode;
-    nodes[nodes.length - 1] = newNode;
-    nodes.sort((a,b) => b.weight - a.weight);
+  while (i > 1) {
+    // console.log(memo[i - 1], memo[i - 2], arr[i - 1])
+    if (memo[i - 1] >= memo[i - 2] + arr[i - 1]) i--;
+    else {
+      solution.push(i);
+      i -= 2;
+    }
   }
+  if (solution[solution.length - 1] > 2) solution.push(1);
 
-  return {minLength: countDepth(maxPriority), maxLength: countDepth(minPriority)};
+  return solution.reverse();
 }
 
 
-// console.log(huffmanMinMax(testArr));
+// console.log(mwis(testArr));
 
-fs.readFile('huffman.txt', 'utf8', (err, data) => {
+fs.readFile('data/mwis.txt', 'utf8', (err, data) => {
   const lines = data.split('\n').slice(1,-1).map(Number);
 
-  console.log(huffmanMinMax(lines));
-})
+  const solution = mwis(lines);
+  console.log((solution.indexOf(1)   > -1 ? "1" : "0") + 
+              (solution.indexOf(2)   > -1 ? "1" : "0") +
+              (solution.indexOf(3)   > -1 ? "1" : "0") +
+              (solution.indexOf(4)   > -1 ? "1" : "0") +
+              (solution.indexOf(17)  > -1 ? "1" : "0") +
+              (solution.indexOf(117) > -1 ? "1" : "0") +
+              (solution.indexOf(517) > -1 ? "1" : "0") +
+              (solution.indexOf(997) > -1 ? "1" : "0"));
+});

@@ -29,7 +29,7 @@ function huffmanMinMax (arr) {
 
 // console.log(huffmanMinMax(testArr));
 
-fs.readFile('huffman.txt', 'utf8', (err, data) => {
+fs.readFile('data/huffman.txt', 'utf8', (err, data) => {
   const lines = data.split('\n').slice(1,-1).map(Number);
 
   console.log(huffmanMinMax(lines));
