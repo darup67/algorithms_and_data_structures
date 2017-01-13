@@ -5,28 +5,30 @@ const testArr = [[0,0], [3,4], [2,3], [4,2], [4,3]],
       testWgt = 6;
 
 function knapsack (arr, weight) {
-  const solution = [[]];
-  for (let j = 0; j <= weight; j++) solution[0][j] = 0;
+  let prevCol,
+      currCol = [];
+  for (let j = 0; j <= weight; j++) currCol[j] = 0;
 
   for (let i = 1; i < arr.length; i++) {
-    solution[i] = [];
-
+    prevCol = currCol;
+    currCol = [];
+    
     for (let j = 0; j <= weight; j++) {
-      const caseOne = solution[i - 1][j],
-            caseTwo = solution[i - 1][j - arr[i][1]] + arr[i][0];
+      const caseOne = prevCol[j],
+            caseTwo = prevCol[j - arr[i][1]] + arr[i][0];
 
-      if (j - arr[i][1] < 0) solution[i][j] = caseOne;
-      else solution[i][j] = Math.max(caseOne, caseTwo);
+      if (j - arr[i][1] < 0) currCol[j] = caseOne;
+      else currCol[j] = Math.max(caseOne, caseTwo);
     }
   }
 
-  return solution[arr.length - 1][weight];
+  return currCol[weight];
 }
 
 
 // console.log(knapsack(testArr, testWgt));
 
-fs.readFile('data/knapsack100.txt', 'utf8', (err, data) => {
+fs.readFile('data/knapsack_big.txt', 'utf8', (err, data) => {
   const lines  = data.split('\n'),
         arr    = [],
         weight = lines[0].split(' ').map(Number)[0];
