@@ -4,7 +4,8 @@ const fs        = require('fs'),
       testInput = [[[1, 5]], [[2, 10]], [[0, 15]]];
 
 function floydWarshall (vertices) {
-  const arr = new Array(vertices.length);
+  let prevArr,
+      currArr = new Array(vertices.length);
 
   // Does edge(i,j) exist?
   function findEdge (vertex, endPoint) {
@@ -15,31 +16,36 @@ function floydWarshall (vertices) {
   }
 
   // Initialization step
-  for (let i = 1; i < vertices.length; i++) {
-    arr[i] = [];
+  for (let i = 0; i < vertices.length - 1; i++) {
+    currArr[i] = [];
 
-    for (let j = 1; j < vertices.length; j++) {
-      arr[i][j] = [];
-      
-      if (i === j) arr[i][j][0] = 0;
+    for (let j = 0; j < vertices.length - 1; j++) {
+      if (i === j) currArr[i][j] = 0;
       else {
-        const weight = findEdge(vertices[i], j);
-        if (weight) arr[i][j][0] = weight;
-        else arr[i][j][0] = Infinity;
+        const weight = findEdge(vertices[i + 1], j + 1);
+        if (weight) currArr[i][j] = weight;
+        else currArr[i][j] = Infinity;
       }
     }
   }
 
   // Main loop
-  for (let k = 1; k < vertices.length; k++) {
-    for (let i = 1; i < vertices.length; i++) {
-      for (let j = 1; j < vertices.length; j++) {
-        arr[i][j][k] = Math.min(arr[i][j][k - 1], arr[i][k][k - 1] + arr[k][j][k - 1]);
+  for (let k = 0; k < vertices.length - 1; k++) {
+    let temp = prevArr;
+    prevArr = currArr;
+    currArr = new Array(vertices.length);
+    temp = null;
+    
+    for (let i = 0; i < vertices.length - 1; i++) {
+      currArr[i] = [];
+
+      for (let j = 0; j < vertices.length - 1; j++) {
+        currArr[i][j] = Math.min(prevArr[i][j], prevArr[i][k] + prevArr[k][j]);
       }
     }
   }
 
-  return arr;
+  return currArr;
 }
 
 // Read file and process data set
