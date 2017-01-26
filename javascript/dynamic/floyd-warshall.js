@@ -4,8 +4,9 @@ const fs        = require('fs'),
       testInput = [[[1, 5]], [[2, 10]], [[0, 15]]];
 
 function floydWarshall (vertices) {
+  const n = vertices.length - 1;
   let prevArr,
-      currArr = new Array(vertices.length);
+      currArr = new Array(n);
 
   // Does edge(i,j) exist?
   function findEdge (vertex, endPoint) {
@@ -16,10 +17,10 @@ function floydWarshall (vertices) {
   }
 
   // Initialization step
-  for (let i = 0; i < vertices.length - 1; i++) {
+  for (let i = 0; i < n; i++) {
     currArr[i] = [];
 
-    for (let j = 0; j < vertices.length - 1; j++) {
+    for (let j = 0; j < n; j++) {
       if (i === j) currArr[i][j] = 0;
       else {
         const weight = findEdge(vertices[i + 1], j + 1);
@@ -30,26 +31,38 @@ function floydWarshall (vertices) {
   }
 
   // Main loop
-  for (let k = 0; k < vertices.length - 1; k++) {
+  for (let k = 0; k < n; k++) {
     let temp = prevArr;
     prevArr = currArr;
-    currArr = new Array(vertices.length);
+    currArr = new Array(n);
     temp = null;
     
-    for (let i = 0; i < vertices.length - 1; i++) {
+    for (let i = 0; i < n; i++) {
       currArr[i] = [];
 
-      for (let j = 0; j < vertices.length - 1; j++) {
+      for (let j = 0; j < n; j++) {
         currArr[i][j] = Math.min(prevArr[i][j], prevArr[i][k] + prevArr[k][j]);
       }
     }
   }
 
-  return currArr;
+  // Find and return 'shortest shortest path'
+  let min = Number.MAX_SAFE_INTEGER;
+  
+  for (let i = 0; i < n; i++) {
+    
+    // Negative cost cycle check
+    if (currArr[i][i] < 0) return 'Negative cycle detected';
+
+    for (let j = 0; j < n; j++) {
+      if (i !== j && currArr[i][j] < min) min = currArr[i][j];
+    }
+  }
+  return min;
 }
 
 // Read file and process data set
-fs.readFile("data/test1.txt", "utf8", (err, data) => {
+fs.readFile(process.argv[2], "utf8", (err, data) => {
   const lines    = data.split('\r\n'),
         vertices = new Array(parseInt(lines[0].split(' ')[0]));
 
@@ -60,6 +73,5 @@ fs.readFile("data/test1.txt", "utf8", (err, data) => {
     vertices[startVertex] ? vertices[startVertex].push([endVertex, weight]) : vertices[startVertex] = [[endVertex, weight]];
   }
   
-  const output = floydWarshall(vertices);
-  console.log(output);
+  console.log(floydWarshall(vertices));
 })
