@@ -6,7 +6,7 @@ const fs        = require('fs'),
 function floydWarshall (vertices) {
   const n = vertices.length - 1;
   let prevArr,
-      currArr = new Array(n);
+      currArr = [];
 
   // Does edge(i,j) exist?
   function findEdge (vertex, endPoint) {
@@ -25,7 +25,7 @@ function floydWarshall (vertices) {
       else {
         const weight = findEdge(vertices[i + 1], j + 1);
         if (weight) currArr[i][j] = weight;
-        else currArr[i][j] = Infinity;
+        else currArr[i][j] = Number.POSITIVE_INFINITY;
       }
     }
   }
@@ -34,7 +34,7 @@ function floydWarshall (vertices) {
   for (let k = 0; k < n; k++) {
     let temp = prevArr;
     prevArr = currArr;
-    currArr = new Array(n);
+    currArr = [];
     temp = null;
     
     for (let i = 0; i < n; i++) {
@@ -46,6 +46,8 @@ function floydWarshall (vertices) {
     }
   }
 
+  console.log(currArr);
+
   // Find and return 'shortest shortest path'
   let min = Number.MAX_SAFE_INTEGER;
   
@@ -55,16 +57,16 @@ function floydWarshall (vertices) {
     if (currArr[i][i] < 0) return 'Negative cycle detected';
 
     for (let j = 0; j < n; j++) {
-      if (i !== j && currArr[i][j] < min) min = currArr[i][j];
+      if (currArr[i][j] < min) min = currArr[i][j];
     }
   }
   return min;
 }
 
 // Read file and process data set
-fs.readFile(process.argv[2], "utf8", (err, data) => {
-  const lines    = data.split('\r\n'),
-        vertices = new Array(parseInt(lines[0].split(' ')[0]));
+fs.readFile('data/graph3.txt', "utf8", (err, data) => {
+  const lines    = data.split('\n'),
+        vertices = new Array(parseInt(lines[0].split(' ')[0]) + 1);
 
   // Create vertices from file data
   // Renames vertices (vertex = vertex - 1) to align with zero indexed arrays
