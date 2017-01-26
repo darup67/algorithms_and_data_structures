@@ -23,23 +23,18 @@ def random_cut(g):
 
     ## Select random edge
     randEdge = edgeList[random.randrange(0, len(edgeList))]
-##    print('canary 1')
 
     ## Set superVertex and deletedVertex
     superVertex, deletedVertex = g.vertices[randEdge[0]], g.vertices[randEdge[1]]
-##    print('canary 2')
 
     ## Add deletedVertex.contains to superVertex.contains
     superVertex.contains += deletedVertex.contains
-##    print('canary 3')
 
     ## Connect all edges adjacent to deletedVertex to superVertex
     superVertex.current += [num for num in deletedVertex.current if num != superVertex.contains[0]]
 ##    for y in deletedVertex.current:
 ##        if y != superVertex.contains[0]:
 ##            superVertex.current.append(y)
-
-##    print('canary 4')
 
 ##    deletedVertex.contains = [deletedVertex.contains[0]]
     deletedVertex.active = False
@@ -51,8 +46,6 @@ def random_cut(g):
                 if v.current[x] == deletedVertex.contains[0]:
                     v.current[x] = superVertex.contains[0]
             v.current = [num for num in v.current if num != v.contains[0]]
-
-##    print('canary 5')
 
 ##    for x in range(0, len(graph.vertices)):
 ##        print(g.vertices[x].original)

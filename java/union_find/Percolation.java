@@ -25,8 +25,8 @@ public class Percolation {
       this.n = n;
       nSquared = n * n;
       openGrid = new boolean[n + 1][n + 1];
-      uf     = new WeightedQuickUnionUF(nSquared + 2);
-      ufFull = new WeightedQuickUnionUF(nSquared + 2);
+      uf       = new WeightedQuickUnionUF(nSquared + 2);
+      ufFull   = new WeightedQuickUnionUF(nSquared + 2);
       
       // Union top row to virtual top site
       for (int i = 1; i <= n; i++) {
