@@ -1,79 +1,68 @@
 'use strict';
 
-const fs        = require('fs'),
-      testInput = [[[1, 5]], [[2, 10]], [[0, 15]]];
+const fs = require('fs');
 
-function floydWarshall (vertices) {
-  const n = vertices.length - 1;
-  let prevArr,
-      currArr = [];
-
-  // Does edge(i,j) exist?
-  function findEdge (vertex, endPoint) {
-    for (const edge of vertex) {
-      if (edge[0] === endPoint) return edge[1];
-    }
-    return false;
+// Does edge(i,j) exist?
+function findEdge (vertex, endPoint) {
+  for (const edge of vertex) {
+    if (edge[0] === endPoint) return edge[1];
   }
+  return false;
+}
 
-  // Initialization step
-  for (let i = 0; i < n; i++) {
-    currArr[i] = [];
-
-    for (let j = 0; j < n; j++) {
-      if (i === j) currArr[i][j] = 0;
-      else {
-        const weight = findEdge(vertices[i + 1], j + 1);
-        if (weight) currArr[i][j] = weight;
-        else currArr[i][j] = Number.POSITIVE_INFINITY;
-      }
-    }
-  }
+function floydWarshall (distArr) {
+  const n = distArr.length;
 
   // Main loop
-  for (let k = 0; k < n; k++) {
-    let temp = prevArr;
-    prevArr = currArr;
-    currArr = [];
-    temp = null;
-    
+  for (let k = 0; k < n; k++) {   
     for (let i = 0; i < n; i++) {
-      currArr[i] = [];
-
       for (let j = 0; j < n; j++) {
-        currArr[i][j] = Math.min(prevArr[i][j], prevArr[i][k] + prevArr[k][j]);
+        distArr[i][j] = Math.min(distArr[i][j], distArr[i][k] + distArr[k][j]);
       }
     }
   }
 
-  console.log(currArr);
+  // console.log(currArr);
+
+  // let str = '';
+  // for (const elem of currArr) str += '[ ' + elem.join(', ') + ' ]\n';
+  // fs.writeFile('graph3out.txt', str, err => { if (err) throw err; });
 
   // Find and return 'shortest shortest path'
-  let min = Number.MAX_SAFE_INTEGER;
+  let min = Number.POSITIVE_INFINITY;
   
   for (let i = 0; i < n; i++) {
     
     // Negative cost cycle check
-    if (currArr[i][i] < 0) return 'Negative cycle detected';
+    if (distArr[i][i] < 0) return 'Negative cycle detected at ' + i;
 
     for (let j = 0; j < n; j++) {
-      if (currArr[i][j] < min) min = currArr[i][j];
+      if (i !== j && distArr[i][j] < min) min = distArr[i][j];
     }
   }
   return min;
 }
 
 // Read file and process data set
-fs.readFile('data/graph3.txt', "utf8", (err, data) => {
-  const lines    = data.split('\n'),
-        vertices = new Array(parseInt(lines[0].split(' ')[0]) + 1);
+fs.readFile('data/large.txt', "utf8", (err, data) => {
+  const lines             = data.split('\n'),
+        [vertices, edges] = lines[0].split(' ').map(Number),
+        distArr           = [];
 
-  // Create vertices from file data
-  // Renames vertices (vertex = vertex - 1) to align with zero indexed arrays
-  for (let i = 1; i < lines.length - 1; i++) {
-    const [startVertex, endVertex, weight] = lines[i].split(' ').map(Number);
-    vertices[startVertex] ? vertices[startVertex].push([endVertex, weight]) : vertices[startVertex] = [[endVertex, weight]];
+  // Initialize all distances to Infinity
+  for (let i = 0; i < vertices; i++) {
+    distArr[i] = [];
+    for (let j = 0; j < vertices; j++) distArr[i].push(Number.POSITIVE_INFINITY);
   }
+
+  // Store edges from file data
+  for (let i = 0; i < edges; i++) {
+    const [startVertex, endVertex, weight] = lines[i + 1].split(' ').map(Number);
+    distArr[startVertex - 1][endVertex - 1] = weight;
+  }
+
+  // Zero distances to self
+  for (let i = 0; i < vertices; i++) distArr[i][i] = 0;
   
-  console.log(floydWarshall(vertices));
+  console.log(floydWarshall(distArr));
 })
