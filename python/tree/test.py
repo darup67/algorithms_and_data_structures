@@ -1,11 +1,28 @@
 from BinaryTree import BinaryTree
+from random import randrange
 
 tree = BinaryTree()
-for x in range(10, 0, -1): tree.insert(x)
-tree.delete(9)
-tree.replace(8,50)
+test_list = [randrange(0, 1000) for x in range(100)]
+for x in test_list: tree.insert(x)
+test_list.sort()
 
-print(1 in tree)
-print(0 in tree)
-print()
-for value in tree: print(value)
+for i in range(3):
+    index = randrange(0, 100)
+    tree.delete(test_list[index])
+    test_list.remove(test_list[index])
+    try:
+        assert test_list == [x for x in tree]
+    except AssertionError:
+        tree_list = [x for x in tree]
+        print(len(tree_list), len(test_list))
+        print()
+        for x, y in zip(tree_list, test_list):
+            print(x, y)
+        break
+
+# root = tree.get_root()
+# print(root)
+# print(root.left.data)
+# print(root.left.right.data)
+# print(root.data)
+# print(root.right.data)

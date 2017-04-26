@@ -34,6 +34,9 @@ class BinaryTree:
         
         if self.__root is None: return iter(())
         return list_gen(self.__root)
+
+    def get_root(self):
+        return self.__root
     
     def insert(self, data):
         def do_insertion(curr):
@@ -55,29 +58,50 @@ class BinaryTree:
     def delete(self, data):
         def do_deletion(curr, parent, went_left):
             if data == curr.data:
-                # If curr is a leaf node
-                if curr.left is None and curr.right is None:
-                    if went_left: parent.left = None
-                    else:         parent.right = None
-                # If curr only has a left subtree
-                elif curr.right is None:
-                    if went_left: parent.left = curr.left
-                    else:         parent.right = curr.left
-                # If curr only has a right subtree
-                elif curr.left is None:
-                    if went_left: parent.left = curr.right
-                    else:         parent.right = curr.right
-                # If curr has both subtrees
-                else:
-                    raise NotImplementedError
-                
+                delete_and_rotate(curr, parent, curr.right, went_left)
             elif data < curr.data:
                 if curr.left is None: raise RuntimeError
                 else: do_deletion(curr.left, curr, True)
             else:
                 if curr.right is None: raise RuntimeError
                 else: do_deletion(curr.right, curr, False)
+
+        def delete_and_rotate(curr, parent, temp, went_left):
+            new_temp = curr.right
+            if temp is not None:
+                curr.right = temp
+            # If curr is a leaf node
+            if curr.left is None and curr.right is None:
+                if went_left: parent.left = None
+                else:         parent.right = None
+                print('leaf\n')
+            # If curr only has a left subtree
+            elif curr.right is None:
+                if went_left: parent.left = curr.left
+                else:         parent.right = curr.left
+                curr.left.parent = parent
+                print('left sub\n')
+            # If curr only has a right subtree
+            elif curr.left is None:
+                if went_left: parent.left = curr.right
+                else:         parent.right = curr.right
+                curr.right.parent = parent
+                if temp is not None: delete_and_rotate(curr.right, curr, new_temp, False)
+                else: print('right sub\n')
+            # If curr has both subtrees
+            else:
+                if went_left: parent.left = curr.left
+                else:         parent.right = curr.left
+                curr.left.parent = parent
+                delete_and_rotate(curr.left, curr, new_temp, True)
         
         if self.__root is None: raise RuntimeError
-        elif self.__root.left is None and self.__root.right is None: self.__root = None
-        else: do_deletion(self.__root, None, False)
+        if data == self.__root.data:
+            if   self.__root.left is None and self.__root.right is None: self.__root = None
+            elif self.__root.right is None: self.__root = self.__root.left
+            elif self.__root.left is None: self.__root = self.__root.right
+            else:
+                self.__root = self.__root.left
+                delete_and_rotate(self.__root.left, self.__root, self.__root.right, True)
+        else: do_deletion(self.__root, None, True)
+        self.__length -= 1
