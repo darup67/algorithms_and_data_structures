@@ -6,8 +6,8 @@ test_list = [randrange(0, 1000) for x in range(100)]
 for x in test_list: tree.insert(x)
 test_list.sort()
 
-for i in range(3):
-    index = randrange(0, 100)
+for i in range(50):
+    index = randrange(0, len(test_list))
     tree.delete(test_list[index])
     test_list.remove(test_list[index])
     try:
