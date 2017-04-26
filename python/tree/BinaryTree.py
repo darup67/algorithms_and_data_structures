@@ -27,15 +27,13 @@ class BinaryTree:
         return find_data(self.__root)
 
     def __iter__(self):
-        def build_list(curr, output_list):
-            if curr is None: return
-            build_list(curr.left, output_list)
-            output_list.append(curr.data)
-            build_list(curr.right, output_list)
-
-        output = []
-        build_list(self.__root, output)
-        return (data for data in output)
+        def list_gen(curr):
+            if curr.left is not None: yield from list_gen(curr.left)
+            yield curr.data
+            if curr.right is not None: yield from list_gen(curr.right)
+        
+        if self.__root is None: return iter(())
+        return list_gen(self.__root)
     
     def insert(self, data):
         def do_insertion(curr):
