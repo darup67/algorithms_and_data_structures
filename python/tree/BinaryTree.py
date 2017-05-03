@@ -56,20 +56,33 @@ class BinaryTree:
         self.insert(new_data)
     
     def delete(self, data):
-        def reinsert(curr, node):
-            if node.data < curr.data:
-                if curr.left is None:
-                    curr.left = node
-                    node.parent = curr
-                else: reinsert(curr.left, node)
-            else:
-                if curr.right is None:
-                    curr.right = node
-                    node.parent = curr
-                else: reinsert(curr.right, node)
+        def replace_with_next_highest(node):
+            def get_left(curr):
+                while curr.left is not None: curr = curr.left
+                return curr
 
+            assert node.right is not None
+
+            if node.right.left is None:
+                # print('Leaf node')
+                node.data = node.right.data
+                if node.right.right is None: node.right = None  # Leaf node
+                else:                                           # Only has a right subtree
+                    node.right.right.parent = node
+                    node.right = node.right.right
+            else:
+                # print('Tree node')
+                next_highest = get_left(node.right)
+                node.data = next_highest.data
+                if next_highest.right is None: next_highest.parent.left = None  # Leaf node
+                else:                                                           # Only has a right subtree
+                    next_highest.right.parent = next_highest.parent
+                    next_highest.parent.left = next_highest.right
+            # print('Replaced {} with {}'.format(data, node.data))
+        
         def do_deletion(curr, parent, went_left):
             if data == curr.data:
+                # print('Commencing delete of {}'.format(data))
                 # If curr is a leaf node
                 if curr.left is None and curr.right is None:
                     if went_left: parent.left = None
@@ -86,24 +99,21 @@ class BinaryTree:
                     curr.right.parent = parent
                 # If curr has both subtrees
                 else:
-                    if went_left: parent.left = curr.left
-                    else:         parent.right = curr.left
-                    curr.left.parent = parent
-                    reinsert(self.__root, curr.right)
+                    replace_with_next_highest(curr)
+                    
             elif data < curr.data:
-                if curr.left is None: raise RuntimeError
+                if curr.left is None: raise RuntimeError('Data not in tree')
                 else: do_deletion(curr.left, curr, True)
             else:
-                if curr.right is None: raise RuntimeError
+                if curr.right is None: raise RuntimeError('Data not in tree')
                 else: do_deletion(curr.right, curr, False)
         
-        if self.__root is None: raise RuntimeError
+        if self.__root is None: raise RuntimeError('Deletion on empty tree')
         if data == self.__root.data:
-            if   self.__root.left is None and self.__root.right is None: self.__root = None
-            elif self.__root.right is None: self.__root = self.__root.left
-            elif self.__root.left is None: self.__root = self.__root.right
-            else:
-                self.__root = self.__root.left
-                reinsert(self.__root, self.__root.right)
+            # print('Deleting root')
+            if   self.__root.left == None and self.__root.right == None: self.__root = None
+            elif self.__root.right == None:                              self.__root = self.__root.left
+            elif self.__root.left == None:                               self.__root = self.__root.right
+            else:                                                        replace_with_next_highest(self.__root)
         else: do_deletion(self.__root, None, True)
         self.__length -= 1
