@@ -18,7 +18,7 @@ for key, value in map:
     print('{}: {}'.format(key, value))
 print('End of hash table\n')
 
-del map[32]
+del map[64]
 for key, value in map:
     print('{}: {}'.format(key, value))
 print('End of hash table\n')

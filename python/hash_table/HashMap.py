@@ -8,6 +8,8 @@ class HashMap:
     __EXPANSION_FACTOR = 4
 
     def __init__(self, size=32):
+        if size < 32 or bin(size).count('1') != 1:
+            raise ValueError('Size must be a power of 2 >= 32')
         self.__data = [None for x in range(size)]
 
     def __getindex__(self, key):
@@ -27,8 +29,7 @@ class HashMap:
         index = self.__getindex__(key)
         node, prev = self.__data[index], None
 
-        if node is None:
-            self.__data[index] = ListNode((key, value))
+        if node is None: self.__data[index] = ListNode((key, value))
         else:
             chain_length = 1
             while node is not None:
@@ -38,7 +39,7 @@ class HashMap:
                 prev = node
                 node = node.next
                 chain_length += 1
-            
+
             prev.next = ListNode((key, value))
             if chain_length > self.__MAX_CHAIN: self.__expand__()
 
