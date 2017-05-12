@@ -12,21 +12,26 @@ class HashMap:
             raise ValueError('Size must be a power of 2 >= 32')
         self.__data = [None for x in range(size)]
 
-    def __getindex__(self, key):
+    def __getindex(self, key):
         return (len(self.__data) - 1) & hash(key)
 
     def __contains__(self, key):
-        return True if self[key] is not None else False
+        try:
+            self[key]
+        except KeyError:
+            return False
+        else:
+            return True
 
     def __getitem__(self, key):
-        node = self.__data[self.__getindex__(key)]
+        node = self.__data[self.__getindex(key)]
         while node is not None:
             if node.data[0] == key: return node.data[1]
             node = node.next
-        return None
+        raise KeyError(key)
 
     def __setitem__(self, key, value):
-        index = self.__getindex__(key)
+        index = self.__getindex(key)
         node, prev = self.__data[index], None
 
         if node is None: self.__data[index] = ListNode((key, value))
@@ -41,10 +46,10 @@ class HashMap:
                 chain_length += 1
 
             prev.next = ListNode((key, value))
-            if chain_length > self.__MAX_CHAIN: self.__expand__()
+            if chain_length > self.__MAX_CHAIN: self.__expand()
 
     def __delitem__(self, key):
-        index = self.__getindex__(key)
+        index = self.__getindex(key)
         node = self.__data[index]
 
         if node is None: raise KeyError(key)
@@ -63,9 +68,9 @@ class HashMap:
                 yield node.data
                 node = node.next
 
-    def __expand__(self):
+    def __expand(self):
         'Rehash table if chains grow too long'
         new_table = HashMap(len(self.__data) * self.__EXPANSION_FACTOR)
         for key, value in self:
-            self[key] = value
-        self = new_table
+            new_table[key] = value
+        self.__data = new_table.__data
