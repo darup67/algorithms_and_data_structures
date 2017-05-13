@@ -41,16 +41,26 @@ public class RabinKarp {
     }
 
     public void setSublen (int sublen) {
+        if (sublen < 1) throw new IllegalArgumentException("Substring length must be >= 1");
         mapSublen = sublen;
         generateHashMap();
     }
 
     public boolean contains (String substr) {
-        if (substr.length() == mapSublen || mapSublen == 0) return containsAny(substr);
-        throw new IllegalArgumentException(String.format("Contains requires substrings of currently mapped length (%d chars)", mapSublen));
+        if (substr.length() == mapSublen || mapSublen == 0) return positionAny(substr) != -1 ? true : false;
+        throw new IllegalArgumentException(String.format(".contains requires substrings of currently mapped length (%d chars)", mapSublen));
     }
 
     public boolean containsAny (String substr) {
+        return positionAny(substr) != -1 ? true : false;
+    }
+
+    public int position (String substr) {
+        if (substr.length() == mapSublen || mapSublen == 0) return positionAny(substr);
+        throw new IllegalArgumentException(String.format(".position requires substrings of currently mapped length (%d chars)", mapSublen));
+    }
+
+    public int positionAny (String substr) {
         if (substr.equals("")) throw new IllegalArgumentException("Empty string passed as argument");
 
         final int sublen = substr.length();
@@ -58,17 +68,16 @@ public class RabinKarp {
         if (sublen != mapSublen) setSublen(sublen);
         
         final int subCode = substrHashCode(substr);
-        if (!subMap.containsKey(substrHashCode(substr))) return false;
+        if (!subMap.containsKey(substrHashCode(substr))) return -1;
 
         final int index = subMap.get(subCode);
-        if (str.substring(index, index + sublen).equals(substr)) return true;
-        return false;
+        return str.substring(index, index + sublen).equals(substr) ? index : -1;
     }
 
     public static void main (String[] args) {
         RabinKarp rk = new RabinKarp("doe are hearing me");
         System.out.println(rk.contains("ear"));
         System.out.println(rk.contains(" me"));
-        System.out.println(rk.containsAny("doe are"));
+        System.out.println(rk.positionAny("doe are"));
     }
 }
