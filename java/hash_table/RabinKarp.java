@@ -2,23 +2,23 @@ import java.util.*;
 
 public class RabinKarp {
     private final String str;
-    private final int sublen;
-    private final HashMap<Integer, Integer> subMap;
-
-    private HashMap<Integer, Integer> substrHashMap () {
+    private HashMap<Integer, Integer> subMap;
+    private int mapSublen = 0;
+    
+    private void generateHashMap () {
         HashMap<Integer, Integer> map = new HashMap<>();
         
-        int hash = substrHashCode(str.substring(0, sublen));
+        int hash = substrHashCode(str.substring(0, mapSublen));
         map.put(hash, 0);
 
-        final int numCodes = str.length() - sublen + 1,
-                  maxMult  = (int) Math.pow(256, (sublen - 1));
+        final int numCodes = str.length() - mapSublen + 1,
+                  maxMult  = (int) Math.pow(256, (mapSublen - 1));
         for (int i = 1; i < numCodes; i++) {
-            hash = (hash - ((int) str.charAt(i - 1)) * maxMult) * 256 + ((int) str.charAt(i + sublen - 1));
+            hash = (hash - ((int) str.charAt(i - 1)) * maxMult) * 256 + ((int) str.charAt(i + mapSublen - 1));
             map.put(hash, i);
         }
 
-        return map;
+        subMap = map;
     }
 
     private int substrHashCode (String substr) {
@@ -27,14 +27,35 @@ public class RabinKarp {
         return hash;
     }
 
+    public RabinKarp (String str) {
+        this.str = str;
+    }
+
     public RabinKarp (String str, int sublen) {
         this.str = str;
-        this.sublen = sublen;
-        this.subMap = substrHashMap();
+        setSublen(sublen);
+    }
+
+    public int getSublen () {
+        return mapSublen;
+    }
+
+    public void setSublen (int sublen) {
+        mapSublen = sublen;
+        generateHashMap();
     }
 
     public boolean contains (String substr) {
-        if (substr.length() != sublen) throw new IllegalArgumentException(String.format("Substring must be of length %d", sublen));
+        if (substr.length() == mapSublen || mapSublen == 0) return containsAny(substr);
+        throw new IllegalArgumentException(String.format("Contains requires substrings of currently mapped length (%d chars)", mapSublen));
+    }
+
+    public boolean containsAny (String substr) {
+        if (substr.equals("")) throw new IllegalArgumentException("Empty string passed as argument");
+
+        final int sublen = substr.length();
+        if (sublen > str.length()) throw new IllegalArgumentException("Substring longer than search string");
+        if (sublen != mapSublen) setSublen(sublen);
         
         final int subCode = substrHashCode(substr);
         if (!subMap.containsKey(substrHashCode(substr))) return false;
@@ -45,9 +66,9 @@ public class RabinKarp {
     }
 
     public static void main (String[] args) {
-        RabinKarp rk = new RabinKarp("doe are hearing me", 3);
+        RabinKarp rk = new RabinKarp("doe are hearing me");
         System.out.println(rk.contains("ear"));
         System.out.println(rk.contains(" me"));
-        System.out.println(rk.contains("heo"));
+        System.out.println(rk.containsAny("doe are"));
     }
 }
