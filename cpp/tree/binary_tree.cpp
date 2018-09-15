@@ -161,6 +161,9 @@ private:
 
 public:
     BinaryTree() {};
+    explicit BinaryTree(initializer_list<T> il) {
+        insert(il);
+    };
 
     void print() const {
         printInOrder(root.get());
@@ -179,6 +182,10 @@ public:
         return find(val, root.get());
     }
 
+    inline const_iterator find(const T val) const {
+        return const_iterator(find(val, root.get()));
+    }
+
     void insert(const T val) {
         if (!root) {
             root = make_unique<TreeNode>(val);
@@ -186,6 +193,10 @@ public:
         } else {
             insert(val, root.get());
         }
+    }
+
+    void insert(initializer_list<T> il) {
+        for (auto v : il) insert(v);
     }
     
     void erase(const T val) {
@@ -195,6 +206,15 @@ public:
             root = unique_ptr<TreeNode>(newRoot);
         }
     };
+
+    void erase(initializer_list<T> il) {
+        for (auto v : il) erase(v);
+    }
+
+    void clear() {
+        root.reset();
+        _size = 0;
+    }
 
     const const_iterator begin() const {
         if (empty()) return _end;
@@ -212,8 +232,10 @@ public:
 
 int main(int argc, char const *argv[])
 {
-    BinaryTree<int> tree;
+    BinaryTree<int> tree{20,10,30};
     set<int> valueSet;
+
+    tree.erase({10,30,20});
 
     if (!tree.empty()) {
         cout << endl << "ERROR!" << endl;
@@ -254,6 +276,14 @@ int main(int argc, char const *argv[])
             exit(1);
         }
     }
+
+    tree.clear();
+
+    if (!tree.empty()) {
+        cout << endl << "ERROR!" << endl;
+        cout << "Tree not empty, size: " << tree.size() << endl;
+        exit(1);
+    };
 }
 
 /*
