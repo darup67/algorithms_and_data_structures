@@ -16,22 +16,19 @@ class BinaryTree {
         explicit TreeNode(const T v, TreeNode *const p) : val(v), parent(p) {}
     };
 
-    class iterator {
+    class const_iterator {
         const TreeNode* node;
         
     public:
-        using iterator_category = bidirectional_iterator_tag;
-        using value_type = T;
-        using difference_type = T;
-        using pointer = T*;
-        using reference = T&;
+        using iterator_category = input_iterator_tag;
+        using value_type = const T;
+        using difference_type = const T;
+        using pointer = const T*;
+        using reference = const T&;
 
-        explicit iterator(TreeNode* n) : node(n) {}
+        explicit const_iterator(TreeNode* n) : node(n) {}
 
-        inline const T& operator*() const { return node->val; }
-        inline bool operator!=(iterator& it) const { return node != it.node; }
-        
-        iterator& operator++() {
+        const_iterator& operator++() {
             // Node is the root or has a right child - descend to successor node
             if (!node->parent || node->right) {
                 node = node->right.get();
@@ -45,7 +42,7 @@ class BinaryTree {
             } else {
 
                 // Ascend to the parent of the root of this right branch
-                auto currVal{node->val}; 
+                auto currVal{node->val};
                 while (node->parent && node->parent->right.get() == node) node = node->parent;
                 node = node->parent;
                 
@@ -55,10 +52,20 @@ class BinaryTree {
 
             return *this;
         }
+
+        const_iterator operator++(int) {
+            const_iterator retVal{*this};
+            ++(*this);
+            return retVal;
+        }
+
+        inline bool operator==(const_iterator& other) const { return node == other.node; }
+        inline bool operator!=(const_iterator& other) const { return !(*this == other); }
+        inline reference operator*() const { return node->val; }
     };
 
     unique_ptr<TreeNode> root{nullptr};
-    const iterator _end{nullptr};
+    const const_iterator _end{nullptr};
     int _size{0};
 
 private:
@@ -189,15 +196,15 @@ public:
         }
     };
 
-    const iterator begin() const {
+    const const_iterator begin() const {
         if (empty()) return _end;
 
         auto retNode{root.get()};
         while (retNode->left) retNode = retNode->left.get();
-        return iterator(retNode);
+        return const_iterator(retNode);
     }
 
-    const iterator end() const {
+    const const_iterator end() const {
         return _end;
     }
 };
@@ -239,7 +246,7 @@ int main(int argc, char const *argv[])
             cout << "Actual: " << endl;
             int j{0};
             for (int x : tree) {
-                cout << x << ', ';
+                cout << x << ", ";
                 ++j;
                 if (j > tree.size() + 10) break;
             }
@@ -250,9 +257,8 @@ int main(int argc, char const *argv[])
 }
 
 /*
+TODO:
 Replace rand() with better random func in tests
 Add template specialization for key, value pairs
-Add iterator postfix ++
 Add iterator pre/postfix -- (support reverse iteration)
-Add const_iterator
 */
